@@ -1,0 +1,9 @@
+.MuiButtonBase-root {
+  box-shadow: none !important;
+}
+.MuiPaper-root {
+  box-shadow: none !important;
+}
+/* .css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root {
+  z-index: 99999999999999999 !important;
+} */

@@ -10,7 +10,9 @@ export const tagTypesList = [
   "folder",
   'project',
   "service",
-  'team'
+  'team',
+  'review',
+  'faq'
 ];
 export enum tagTypes {
   user = "user",

@@ -3,7 +3,7 @@
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
 import ADEditor from "@/components/Forms/JodiEditor";
-import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack } from "@mui/material";
+import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack, FormControlLabel, Checkbox } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
@@ -14,6 +14,7 @@ import ADAutoComplete from "@/components/Forms/AutoComplete";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
 import { nearby_location, tags } from "@/constant";
+import ADCheckbox from "@/components/Forms/checkbox";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -72,7 +73,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
         newVideoUrls[index] = event.target.value || '';  // Default to empty string if input is empty
         setVideoUrls(newVideoUrls);  // Update the videoUrls state
     };
-    
+
 
     // Function to remove a video URL input field
     const handleRemoveVideoUrl = () => {
@@ -88,6 +89,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
 
     const handleSubmit = async (values: FieldValues) => {
+        console.log(values)
 
 
         const modifiedValues = {
@@ -106,7 +108,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
         try {
             const res = await createProject(modifiedValues).unwrap();
-      
+            console.log(res)
             toast.success(res.message || 'Project create successfull!');
             setOpen(false);
         } catch (err: any) {
@@ -296,14 +298,18 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                 <Grid container spacing={2}>
                                     <Grid item md={12} sm={12}>
 
+                                        <ADCheckbox name="feature" label="Feature Image" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+
                                         {videoUrls.map((url, index) => (
                                             <ADInput
-                                            key={index}
-                                            name={`videoUrls.${index}`}  
-                                            label="Video URL"
-                                            onChange={(event) => handleInputChange(index, event)} 
-                                            fullWidth
-                                        />
+                                                key={index}
+                                                name={`videoUrls.${index}`}
+                                                label="Video URL"
+                                                onChange={(event) => handleInputChange(index, event)}
+                                                fullWidth
+                                            />
                                         ))}
                                     </Grid>
                                     <Grid item md={12} sm={12}>
@@ -320,6 +326,20 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                             name="virtual_Location"
                                             options={nearby_location}
                                         />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADAutoComplete
+                                            label="Category"
+                                            name="category"
+                                            options={tags}
+                                        />
+
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="max_price" label="Max Price" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="min_price" label="Min Price" />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">

@@ -4,7 +4,7 @@ const reviewApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createreview: builder.mutation({
       query: (data) => ({
-        url: "/review",
+        url: "/reviews",
         method: "POST",
         data,
       }),
@@ -13,14 +13,14 @@ const reviewApi = baseApi.injectEndpoints({
 
     deletereview: builder.mutation({
       query: (id) => ({
-        url: `/review/${id}`,
+        url: `/reviews/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["review"],
     }),
     getAllreview: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
-        url: `/review`,
+        url: `/reviews`,
         method: "GET",
         params: { page, limit },
       }),
@@ -29,14 +29,14 @@ const reviewApi = baseApi.injectEndpoints({
 
     getSinglereview: builder.query({
       query: (id) => ({
-        url: `/review/${id}`,
+        url: `/reviews/${id}`,
         method: "GET",
       }),
       providesTags: ["review"],
     }),
     updatereview: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `/review/${id}`,
+        url: `/reviews/${id}`,
         method: "PATCH",
         data,
       }),

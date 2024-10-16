@@ -96,6 +96,11 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         data.conceptImage = conceptImage;
         data.overviewImage = overviewImage;
 
+        if (Array.isArray(data.category)) {
+            data.category = data.category.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.category : key)
+            );
+        }
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.meta_keywords : key)
@@ -186,6 +191,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         meta_title: singleData?.meta_title || "",
         meta_description: singleData?.meta_description || "",
         meta_keywords: singleData?.meta_keywords || "",
+        min_price: singleData?.min_price || "",
+        max_price: singleData?.max_price || "",
+        category: singleData?.category || "",
+   
 
     };
 
@@ -371,7 +380,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid container spacing={2}>
                                             <Grid item md={12} sm={12}>
 
-                                                {singleData?.videoUrls?.map((url:any, index:number) => (
+                                                {singleData?.videoUrls?.map((url: any, index: number) => (
                                                     <ADInput
                                                         key={index}
                                                         name={`videoUrls.${index}`}
@@ -395,6 +404,21 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                     name="virtual_Location"
                                                     options={nearby_location}
                                                 />
+                                            </Grid>
+
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Category"
+                                                    name="category"
+                                                    options={tags}
+                                                />
+
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="max_price" label="Max Price" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="min_price" label="Min Price" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight="semibold" marginBottom="10px">

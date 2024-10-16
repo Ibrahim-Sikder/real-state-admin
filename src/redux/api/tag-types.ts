@@ -12,7 +12,8 @@ export const tagTypesList = [
   "service",
   'team',
   'review',
-  'faq'
+  'faq',
+  'affiliation',
 ];
 export enum tagTypes {
   user = "user",

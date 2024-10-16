@@ -44,28 +44,38 @@ const SideBarItems = ({ index, item }: IProps) => {
   const linkPath = `${item.path}`;
   const pathName = usePathname();
   const isActive = pathName === linkPath;
-  const theme = useTheme();
 
   return item.child ? (
-    <Accordion key={index} sx={{ boxShadow: 'none', background: '', color: '#fff' }}>
+    <Accordion
+      key={index}
+      sx={{
+        boxShadow: 'none',
+        backgroundColor: 'transparent',
+
+      }}
+    >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: '#111' }} />}
+        expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}
         aria-controls={`panel${index}-content`}
         id={`panel${index}-header`}
+        sx={{
+          backgroundColor: 'transparent',
+          color: 'white',
+        }}
       >
-        <ListItemIcon sx={{ minWidth: "28px", color: isActive ? 'white' : 'black' }}>
+        <ListItemIcon sx={{ minWidth: "28px", color: isActive ? 'white' : '#fff' }}>
           {item.icon && <item.icon />}
         </ListItemIcon>
-        <ListItemText primary={item.title} sx={{ ml: 4, color: 'white' }} />
+        <ListItemText primary={item.title} sx={{ ml: 4, color: '#fff' }} />
       </AccordionSummary>
-      <AccordionDetails sx={{ p: 0, m: 0 }}>
+      <AccordionDetails sx={{ p: 0, m: 0, backgroundColor: 'transparent' }}>
         <List component="div">
           {item.child.map((subItem, subIndex) => {
             const subLinkPath = `/dashboard/${subItem.path}`;
             const isSubActive = pathName === subLinkPath;
 
             return (
-              <Link href={subLinkPath} key={subIndex} passHref style={{ textDecoration: "none" }}>
+              <Link href={subLinkPath} key={subIndex} passHref style={{ textDecoration: "none",  }}>
                 <ListItemStyled
                   nested
                   isActive={isSubActive}
@@ -76,7 +86,7 @@ const SideBarItems = ({ index, item }: IProps) => {
                       <ListItemIcon
                         sx={{
                           minWidth: "28px",
-                          color: isSubActive ? 'white' : 'black',
+                          color: isSubActive ? '#fff' : '#fff',
                         }}
                       >
                         <subItem.icon size={18} />
@@ -87,7 +97,7 @@ const SideBarItems = ({ index, item }: IProps) => {
                       primaryTypographyProps={{
                         fontSize: "14px",
                         fontWeight: isSubActive ? "bold" : "medium",
-                        color: isActive ? 'white' : "black",
+                        color: isSubActive ? 'white' : '#fff',
                       }}
                     />
                   </ListItemButton>
@@ -105,7 +115,7 @@ const SideBarItems = ({ index, item }: IProps) => {
         level={0}
       >
         <ListItemButton>
-          <ListItemIcon sx={{ m: 0, color: 'white' }}>
+          <ListItemIcon sx={{ m: 0, color: 'white' }}> {/* Main icon color set to white */}
             {item.icon && <item.icon />}
           </ListItemIcon>
           <ListItemText
@@ -114,7 +124,6 @@ const SideBarItems = ({ index, item }: IProps) => {
               fontSize: "14px",
               fontWeight: isActive ? "bold" : "medium",
               color: isActive ? 'white' : "inherit",
-
             }}
           />
         </ListItemButton>
@@ -124,3 +133,5 @@ const SideBarItems = ({ index, item }: IProps) => {
 };
 
 export default SideBarItems;
+
+

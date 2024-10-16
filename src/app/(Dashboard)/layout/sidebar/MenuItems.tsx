@@ -46,6 +46,11 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           icon: ContactMail,
         },
         {
+          title: "Affiliation",
+          path: `/dashboard/${role}/affiliation`,
+          icon: ContactMail,
+        },
+        {
           title: "Contact ",
           path: `/dashboard/${role}/contact`,
           icon: ContactMail,

@@ -5,57 +5,38 @@ import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
-import EditIcon from "@mui/icons-material/Edit";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Pagination, Stack, Typography } from "@mui/material";
 import TableContainer from "@mui/material/TableContainer";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
 import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
-import Image from "next/image";
 import Swal from "sweetalert2";
-import CreateProjectModal from "./_components/CreateProjectModal";
-import UpdateProjectModal from "./_components/UpdateProjectModal";
-import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
-export type TOppressed = {
+import EditIcon from "@mui/icons-material/Edit";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { useDeleteFaqMutation, useGetAllFaqQuery } from "@/redux/api/faqApi";
+import CreateFAQModal from "./_components/CreateFAQModal";
+import UpdateFAQModal from "./_components/UpdateFAQModal";
+export type TFaq = {
     _id: string,
-    title: string;
-    sub_title: string;
-    project_type: string;
-    project_address: string;
-    land_area: string;
-    storied: string;
-    apartment_contains: string;
-    overview_Location: string[];
-    short_description: string;
-    overview_description: string;
-    concept_Location?: string[];
-    concept_description?: string;
-    floor_title?: string;
-    floor_Location?: string[];
-    floor_description?: string;
-    map_Location?: string[];
-    map_description?: string;
-    conceptImage?: string;
-    overviewImage?: string;
-    videoUrls?: string[];
-    locationImg: string,
+    answer: string,
+    question: string,
     createdAt: string,
-    floorImage: string,
+    date: string,
+
 };
 
 
-const ProjectPage = () => {
+const FAQPage = () => {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: projectData, isLoading } = useGetAllProjectQuery({ page: currentPage, limit: 10 });
-    const [deleteProject] = useDeleteProjectMutation();
+    const { data: faqData, isLoading } = useGetAllFaqQuery({ page: currentPage, limit: 5 });
+    const [deleteFaq] = useDeleteFaqMutation();
     const handleOpen = () => setOpen(true);
 
     const hanldeOpenUpdateModal = (id: string) => {
@@ -83,7 +64,7 @@ const ProjectPage = () => {
 
             if (result.isConfirmed) {
                 try {
-                    await deleteProject(id).unwrap();
+                    await deleteFaq(id).unwrap();
 
                     Swal.fire({
                         title: "Deleted!",
@@ -97,7 +78,7 @@ const ProjectPage = () => {
         });
     };
 
-    const { meta } = projectData?.data || { meta: {}, oppresses: [] };
+    const { meta } = faqData?.data || { meta: {}, oppresses: [] };
     const { totalPage = 5 } = meta || {};
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
@@ -127,7 +108,6 @@ const ProjectPage = () => {
         },
     };
     const iconStyle = { fontSize: '20px' }
-    console.log(projectData)
 
     return (
         <PageContainer>
@@ -135,14 +115,12 @@ const ProjectPage = () => {
                 <Box>
 
                     <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>Our Project </Typography>
-
+                        <Typography variant="h5" fontWeight='bold'>Question & Answer </Typography>
                         <Button
                             onClick={handleOpen}
                             startIcon={<AddCircleOutlineIcon />}>
-                            Create Project
+                            Create FAQ
                         </Button>
-
                     </Box>
                     <Box bgcolor="white" padding={3}>
                         <TableContainer component={Paper}>
@@ -150,30 +128,30 @@ const ProjectPage = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Image</TableCell>
-                                        <TableCell align="center">Title</TableCell>
-                                        <TableCell align="center">Sub Title</TableCell>
-                                        <TableCell align="center">Short Description </TableCell>
-                                        <TableCell align="center">Created Date</TableCell>
+                                        <TableCell align="center">Question</TableCell>
+                                        <TableCell align="center">Answer</TableCell>
+                                        <TableCell align="center">Create Date </TableCell>
+
                                         <TableCell align="center">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {projectData?.data?.projects?.map((data: TOppressed, index: number) => (
+                                    {faqData?.data?.faqs?.map((data: TFaq, index: number) => (
                                         <TableRow
                                             key={data._id}
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
+
+                                            <TableCell align="center">{data.question.slice(0, 50)}  </TableCell>
+                                            <TableCell align="center">{data.answer.slice(0, 50)}  </TableCell>
+
+
                                             <TableCell align="center">
-                                                <Image width={50} height={50} className="w-20" src={data.floorImage} alt='activity' />
+                                                {formatDate(data.createdAt)}
+
+
                                             </TableCell>
-                                            <TableCell align="center">{data.title} </TableCell>
-
-                                            <TableCell align="center">{data.sub_title}</TableCell>
-                                            <TableCell align="center">{data.short_description}</TableCell>
-
-                                            <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
                                             <TableCell align="center">
                                                 <div className="flex justify-center gap-2 ">
 
@@ -200,28 +178,31 @@ const ProjectPage = () => {
                             </Table>
                         </TableContainer>
                     </Box>
-                    {open && (
-                        <CreateProjectModal
-                            open={open}
-                            setOpen={handleClose}
 
-                        />
-                    )}
-                    {openUpdateModal && (
-                        <UpdateProjectModal
-                            open={openUpdateModal}
-                            setOpen={handleCloseUpdateModal}
-                            id={selectedTortureId}
-                        />
-                    )}
                 </Box>
+
+                {open && (
+                    <CreateFAQModal
+                        open={open}
+                        setOpen={handleClose}
+
+                    />
+                )}
+                {openUpdateModal && (
+                    <UpdateFAQModal
+                        open={openUpdateModal}
+                        setOpen={handleCloseUpdateModal}
+                        id={selectedTortureId}
+                    />
+                )}
             </DashboardCard>
             <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
                 <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
             </Stack>
 
+
         </PageContainer>
     );
 };
 
-export default ProjectPage;
+export default FAQPage;

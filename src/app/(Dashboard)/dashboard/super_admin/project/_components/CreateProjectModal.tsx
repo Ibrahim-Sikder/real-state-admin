@@ -4,7 +4,7 @@ import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
 import ADEditor from "@/components/Forms/JodiEditor";
 import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack } from "@mui/material";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
 import ADTextArea from "@/components/Forms/TextArea";
@@ -13,7 +13,7 @@ import ADImageUpload from "@/components/Forms/FileUpload";
 import ADAutoComplete from "@/components/Forms/AutoComplete";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { nearby_location } from "@/constant";
+import { nearby_location, tags } from "@/constant";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -34,37 +34,22 @@ type TProps = {
     initialValues?: FieldValues;
 };
 
-const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour "];
+const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour"];
 
 const CreateProjectModal = ({ open, setOpen }: TProps) => {
     const [createProject] = useCreateProjectMutation();
-    const [thumnailImg, setThumnailImg] = useState<string>("");
-    const [bangla_img, setBangla_img] = useState<string>("");
-    const [eng_img, setEng_img] = useState<string>("");
-    const [thumnailImgOpen, setThumnailImgOpen] = useState(false);
-    const [bngImgOpen, setBngImgOpen] = useState(false);
-    const [engImgOpen, setEngImgOpen] = useState(false);
+    const [overviewImage, setOverviewImage] = useState<string>("");
+    const [conceptImage, setConceptImage] = useState<string>("");
+    const [floorImage, setFloorImage] = useState<string>("");
+    const [locationImg, setLocationImg] = useState<string>("");
+    const [overviewImgOpen, setOverviewImgOpen] = useState(false);
+    const [conceptImgOpen, setConceptImgOpen] = useState(false);
+    const [floorImgOpen, setFloorImgOpen] = useState(false);
+    const [locationImgOpen, setLocationImgOpen] = useState(false);
 
     const [activeStep, setActiveStep] = useState(0);
+    const isLastStep = activeStep === steps.length - 1;
 
-    const handleSubmit = async (values: FieldValues) => {
-        const modifiedValues = {
-            ...values,
-            meta_keywords: values.meta_keywords || [],
-            thumnail_img: thumnailImg,
-            img_bangla: bangla_img,
-            img_english: eng_img,
-        };
-
-        try {
-            const res = await createProject(modifiedValues).unwrap();
-            toast.success(res.message);
-            setOpen(false);
-        } catch (err: any) {
-            console.error("Error:", err);
-            toast.error(err?.data?.message);
-        }
-    };
 
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
@@ -73,7 +58,8 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
-    const [videoUrls, setVideoUrls] = useState(['']);
+    const [videoUrls, setVideoUrls] = useState<string[]>(['']);
+
 
     // Function to add a new video URL input field
     const handleAddVideoUrl = () => {
@@ -81,11 +67,12 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
     };
 
     // Function to handle changes in video URL input fields
-    const handleInputChange = (index: number, event: any) => {
+    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
         const newVideoUrls = [...videoUrls];
-        newVideoUrls[index] = event.target.value;
-        setVideoUrls(newVideoUrls);
+        newVideoUrls[index] = event.target.value || '';  // Default to empty string if input is empty
+        setVideoUrls(newVideoUrls);  // Update the videoUrls state
     };
+    
 
     // Function to remove a video URL input field
     const handleRemoveVideoUrl = () => {
@@ -95,8 +82,40 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
         if (newVideoUrls.length > 1) {
             newVideoUrls.pop(); // Remove the last element
             setVideoUrls(newVideoUrls);
+            setVideoUrls(videoUrls);
         }
     };
+
+
+    const handleSubmit = async (values: FieldValues) => {
+
+
+        const modifiedValues = {
+            ...values,
+            meta_keywords: values.meta_keywords || [],
+            overview_Location: values.overview_Location || [],
+            concept_Location: values.concept_Location || [],
+            floor_Location: values.floor_Location || [],
+            map_Location: values.map_Location || [],
+            overviewImage: overviewImage,
+            conceptImage: conceptImage,
+            floorImage: floorImage,
+            locationImg: locationImg,
+            videoUrls: videoUrls.filter(url => url !== '')
+        };
+
+        try {
+            const res = await createProject(modifiedValues).unwrap();
+      
+            toast.success(res.message || 'Project create successfull!');
+            setOpen(false);
+        } catch (err: any) {
+            toast.error(err?.values?.message || 'Something went to wrong!');
+        }
+
+    };
+
+
 
 
     return (
@@ -111,7 +130,14 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                         ))}
                     </Stepper>
 
-                    <ADForm onSubmit={handleSubmit}>
+                    <ADForm onSubmit={async (values) => {
+                        // Submit form only when on the last step
+                        if (isLastStep) {
+                            await handleSubmit(values);
+                        } else {
+                            handleNext();
+                        }
+                    }}>
                         {activeStep === 0 && (
                             <FormSection>
                                 <Grid container spacing={2}>
@@ -119,30 +145,17 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                             <ADImageUpload
-                                                name="img_bangla"
-                                                setImageUrl={setBangla_img}
-                                                imageUrl={bangla_img}
-                                                label="Select Image"
-                                                onClick={() => setBngImgOpen(true)}
+                                                name="overviewImage"
+                                                setImageUrl={setOverviewImage}
+                                                imageUrl={overviewImage}
+                                                label="Overview Image"
+                                                onClick={() => setOverviewImgOpen(true)}
                                             />
-                                            <ADImageUpload
-                                                name="img_english"
-                                                setImageUrl={setEng_img}
-                                                imageUrl={eng_img}
-                                                label="Select Image"
-                                                onClick={() => setEngImgOpen(true)}
-                                            />
-                                            <ADImageUpload
-                                                onClick={() => setThumnailImgOpen(true)}
-                                                name="thumnail_img"
-                                                setImageUrl={setThumnailImg}
-                                                imageUrl={thumnailImg}
-                                                label="Select Image"
-                                            />
+
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="Title" label="Title" />
+                                        <ADInput fullWidth name="title" label="Title" />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="sub_title" label="Sub Title" />
@@ -166,7 +179,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                         <ADAutoComplete
                                             label="Institutes & Nearby Locations"
-                                            name="apartment_contains"
+                                            name="overview_Location"
                                             options={nearby_location}
                                         />
                                     </Grid>
@@ -175,7 +188,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                        <ADEditor name="description" label="" />
+                                        <ADEditor name="overview_description" label="" />
                                     </Grid>
                                 </Grid>
                             </FormSection>
@@ -187,39 +200,26 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                             <ADImageUpload
-                                                name="img_bangla"
-                                                setImageUrl={setBangla_img}
-                                                imageUrl={bangla_img}
+                                                name="conceptImage"
+                                                setImageUrl={setConceptImage}
+                                                imageUrl={conceptImage}
                                                 label="Select Image"
-                                                onClick={() => setBngImgOpen(true)}
+                                                onClick={() => setConceptImgOpen(true)}
                                             />
-                                            <ADImageUpload
-                                                name="img_english"
-                                                setImageUrl={setEng_img}
-                                                imageUrl={eng_img}
-                                                label="Select Image"
-                                                onClick={() => setEngImgOpen(true)}
-                                            />
-                                            <ADImageUpload
-                                                onClick={() => setThumnailImgOpen(true)}
-                                                name="thumnail_img"
-                                                setImageUrl={setThumnailImg}
-                                                imageUrl={thumnailImg}
-                                                label="Select Image"
-                                            />
+
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
 
                                         <ADAutoComplete
                                             label="Institutes & Nearby Locations"
-                                            name="apartment_contains"
+                                            name="concept_Location"
                                             options={nearby_location}
                                         />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                        <ADEditor name="description" label="" />
+                                        <ADEditor name="concept_description" label="" />
                                     </Grid>
                                 </Grid>
                             </FormSection>
@@ -231,26 +231,13 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                             <ADImageUpload
-                                                name="img_bangla"
-                                                setImageUrl={setBangla_img}
-                                                imageUrl={bangla_img}
+                                                name="floorImage"
+                                                setImageUrl={setFloorImage}
+                                                imageUrl={floorImage}
                                                 label="Select Image"
-                                                onClick={() => setBngImgOpen(true)}
+                                                onClick={() => setFloorImgOpen(true)}
                                             />
-                                            <ADImageUpload
-                                                name="img_english"
-                                                setImageUrl={setEng_img}
-                                                imageUrl={eng_img}
-                                                label="Select Image"
-                                                onClick={() => setEngImgOpen(true)}
-                                            />
-                                            <ADImageUpload
-                                                onClick={() => setThumnailImgOpen(true)}
-                                                name="thumnail_img"
-                                                setImageUrl={setThumnailImg}
-                                                imageUrl={thumnailImg}
-                                                label="Select Image"
-                                            />
+
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
@@ -260,13 +247,13 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                         <ADAutoComplete
                                             label="Institutes & Nearby Locations"
-                                            name="apartment_contains"
+                                            name="floor_Location"
                                             options={nearby_location}
                                         />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                        <ADEditor name="description" label="" />
+                                        <ADEditor name="floor_description" label="" />
                                     </Grid>
                                 </Grid>
                             </FormSection>
@@ -277,26 +264,13 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                             <ADImageUpload
-                                                name="img_bangla"
-                                                setImageUrl={setBangla_img}
-                                                imageUrl={bangla_img}
+                                                name="locationImg"
+                                                setImageUrl={setLocationImg}
+                                                imageUrl={locationImg}
                                                 label="Select Image"
-                                                onClick={() => setBngImgOpen(true)}
+                                                onClick={() => setLocationImgOpen(true)}
                                             />
-                                            <ADImageUpload
-                                                name="img_english"
-                                                setImageUrl={setEng_img}
-                                                imageUrl={eng_img}
-                                                label="Select Image"
-                                                onClick={() => setEngImgOpen(true)}
-                                            />
-                                            <ADImageUpload
-                                                onClick={() => setThumnailImgOpen(true)}
-                                                name="thumnail_img"
-                                                setImageUrl={setThumnailImg}
-                                                imageUrl={thumnailImg}
-                                                label="Select Image"
-                                            />
+
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
@@ -306,13 +280,13 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                         <ADAutoComplete
                                             label="Institutes & Nearby Locations"
-                                            name="apartment_contains"
+                                            name="map_Location"
                                             options={nearby_location}
                                         />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                        <ADEditor name="description" label="" />
+                                        <ADEditor name="map_description" label="" />
                                     </Grid>
                                 </Grid>
                             </FormSection>
@@ -324,13 +298,12 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                         {videoUrls.map((url, index) => (
                                             <ADInput
-                                                key={index}
-                                                fullWidth
-                                                name={`location-${index}`}
-                                                label="Video URL"
-                                                value={url}
-                                                onChange={(event) => handleInputChange(index, event)}
-                                            />
+                                            key={index}
+                                            name={`videoUrls.${index}`}  
+                                            label="Video URL"
+                                            onChange={(event) => handleInputChange(index, event)} 
+                                            fullWidth
+                                        />
                                         ))}
                                     </Grid>
                                     <Grid item md={12} sm={12}>
@@ -344,7 +317,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <ADAutoComplete
                                             label="Institutes & Nearby Locations"
-                                            name="apartment_contains"
+                                            name="virtual_Location"
                                             options={nearby_location}
                                         />
                                     </Grid>
@@ -352,7 +325,33 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
                                             Buy an Apartment on Easy Installments
                                         </Typography>
-                                        <ADEditor name="description" label="" />
+                                        <ADEditor name="virtual_description" label="" />
+                                    </Grid>
+                                </Grid>
+                                <Typography variant="h5" fontWeight='bold' >SEO Section </Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item md={12} sm={12}>
+                                        <ADInput
+                                            fullWidth
+                                            name="meta_title"
+                                            label="Meta Title"
+                                            placeholder="Enter Meta Title"
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADAutoComplete
+                                            label="Meta Keywords"
+                                            name="meta_keywords"
+                                            options={tags}
+                                        />
+
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADTextArea
+                                            name="meta_description"
+                                            label="Meta Description"
+                                            placeholder="Enter Meta Description"
+                                        />
                                     </Grid>
                                 </Grid>
                             </FormSection>
@@ -362,11 +361,10 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                             <Button disabled={activeStep === 0} onClick={handleBack}>
                                 Back
                             </Button>
-                            {activeStep === steps.length - 1 ? (
-                                <Button type="submit">Submit</Button>
-                            ) : (
-                                <Button onClick={handleNext}>Next</Button>
-                            )}
+
+                            <Button type="submit">
+                                {isLastStep ? "Submit" : "Next"}
+                            </Button>
                         </Box>
                     </ADForm>
                 </FormContainer>
@@ -374,25 +372,32 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
 
             <GlobalImageSelector
-                open={thumnailImgOpen}
-                onClose={() => setThumnailImgOpen(false)}
-                setSelectedImage={setThumnailImg}
+                open={overviewImgOpen}
+                onClose={() => setOverviewImgOpen(false)}
+                setSelectedImage={setOverviewImage}
                 mode="single"
-                selectedImage={thumnailImg}
+                selectedImage={overviewImage}
             />
             <GlobalImageSelector
-                open={bngImgOpen}
-                onClose={() => setBngImgOpen(false)}
-                setSelectedImage={setBangla_img}
+                open={conceptImgOpen}
+                onClose={() => setConceptImgOpen(false)}
+                setSelectedImage={setConceptImage}
                 mode="single"
-                selectedImage={bangla_img}
+                selectedImage={conceptImage}
             />
             <GlobalImageSelector
-                open={engImgOpen}
-                onClose={() => setEngImgOpen(false)}
-                setSelectedImage={setEng_img}
+                open={floorImgOpen}
+                onClose={() => setFloorImgOpen(false)}
+                setSelectedImage={setFloorImage}
                 mode="single"
-                selectedImage={eng_img}
+                selectedImage={floorImage}
+            />
+            <GlobalImageSelector
+                open={locationImgOpen}
+                onClose={() => setLocationImgOpen(false)}
+                setSelectedImage={setLocationImg}
+                mode="single"
+                selectedImage={locationImg}
             />
         </>
     );

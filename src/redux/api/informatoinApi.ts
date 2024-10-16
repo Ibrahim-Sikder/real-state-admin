@@ -1,24 +1,24 @@
 import { baseApi } from "./baseApi";
 
-const videoApi = baseApi.injectEndpoints({
+const contactApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
  
-    getAllInformation: builder.query({
+    getAllContact: builder.query({
       query: () => ({
-        url: "/information",
+        url: "/contact",
         method: "GET",
       }),
-      providesTags: ["information"],
+      providesTags: ["contact"],
     }),
-    deleteInformation: builder.mutation({
+    deleteContact: builder.mutation({
       query: (id) => ({
-        url: `/information/${id}`,
+        url: `/contact/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["information"],
+      invalidatesTags: ["contact"],
     }),
   }),
 });
 
-export const { useGetAllInformationQuery, useDeleteInformationMutation } =
-  videoApi;
+export const {useDeleteContactMutation,useGetAllContactQuery } =
+  contactApi;

@@ -150,7 +150,6 @@ const ProjectPage = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Image</TableCell>
                                         <TableCell align="center">Title</TableCell>
                                         <TableCell align="center">Sub Title</TableCell>
                                         <TableCell align="center">Short Description </TableCell>
@@ -165,13 +164,13 @@ const ProjectPage = () => {
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
-                                            <TableCell align="center">
+                                            {/* <TableCell align="center">
                                                 <Image width={50} height={50} className="w-20" src={data.floorImage} alt='activity' />
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell align="center">{data.title} </TableCell>
 
                                             <TableCell align="center">{data.sub_title}</TableCell>
-                                            <TableCell align="center">{data.short_description}</TableCell>
+                                            <TableCell align="center">{data.short_description.slice(0,50)}</TableCell>
 
                                             <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
                                             <TableCell align="center">

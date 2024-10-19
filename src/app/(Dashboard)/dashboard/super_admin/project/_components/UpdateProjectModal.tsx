@@ -15,7 +15,7 @@ import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, loan_partner, nearby_location, tags } from "@/constant";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -41,11 +41,12 @@ const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual 
 
 const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const { data, isLoading } = useGetSingleProjectQuery(id);
+    console.log(data)
     const [updateProject] = useUpdateProjectMutation();
-    const [overviewImage, setOverviewImage] = useState<string>("");
-    const [conceptImage, setConceptImage] = useState<string>("");
-    const [floorImage, setFloorImage] = useState<string>("");
-    const [locationImg, setLocationImg] = useState<string>("");
+    const [overviewImages, setOverviewImages] = useState<string[]>([]);
+    const [conceptImages, setConceptImages] = useState<string[]>([]);
+    const [floorImages, setFloorImages] = useState<string[]>([]);
+    const [locationImages, setLocationImages] = useState<string[]>([]);
     const [overviewImgOpen, setOverviewImgOpen] = useState(false);
     const [conceptImgOpen, setConceptImgOpen] = useState(false);
     const [floorImgOpen, setFloorImgOpen] = useState(false);
@@ -65,26 +66,26 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const [videoUrls, setVideoUrls] = useState<string[]>(['']);
 
 
-    // Function to add a new video URL input field
+
     const handleAddVideoUrl = () => {
         setVideoUrls([...videoUrls, '']);
     };
 
-    // Function to handle changes in video URL input fields
+
     const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
         const newVideoUrls = [...videoUrls];
-        newVideoUrls[index] = event.target.value || '';  // Default to empty string if input is empty
-        setVideoUrls(newVideoUrls);  // Update the videoUrls state
+        newVideoUrls[index] = event.target.value || '';
+        setVideoUrls(newVideoUrls);
     };
 
 
-    // Function to remove a video URL input field
+
     const handleRemoveVideoUrl = () => {
         const newVideoUrls = [...videoUrls];
 
-        // Ensure we only remove the field if there's more than one
+
         if (newVideoUrls.length > 1) {
-            newVideoUrls.pop(); // Remove the last element
+            newVideoUrls.pop();
             setVideoUrls(newVideoUrls);
             setVideoUrls(videoUrls);
         }
@@ -92,9 +93,9 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
     const handleSubmit = async (data: FieldValues) => {
 
-        data.floorImage = floorImage;
-        data.conceptImage = conceptImage;
-        data.overviewImage = overviewImage;
+        data.floorImages = floorImages;
+        data.conceptImages = conceptImages;
+        data.overviewImages = overviewImages;
 
         if (Array.isArray(data.category)) {
             data.category = data.category.filter(key => key != null).map(
@@ -133,6 +134,23 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         }
 
 
+        if (Array.isArray(data.special_amenities)) {
+            data.special_amenities = data.special_amenities.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.special_amenities : key)
+            );
+        }
+        if (Array.isArray(data.common_features)) {
+            data.common_features = data.common_features.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.common_features : key)
+            );
+        }
+        if (Array.isArray(data.home_loan_partner)) {
+            data.home_loan_partner = data.home_loan_partner.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.home_loan_partner : key)
+            );
+        }
+
+
         try {
             const res = await updateProject({ ...data, id }).unwrap();
 
@@ -150,17 +168,17 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     useEffect(() => {
 
         if (singleData) {
-            setOverviewImage(singleData?.overviewImage || "");
-            setConceptImage(singleData?.conceptImage || "");
-            setFloorImage(singleData?.floorImage || "");
-            setLocationImg(singleData?.locationImg || "");
+            setOverviewImages(singleData?.overviewImages ? Array.isArray(singleData.overviewImages) ? singleData.overviewImages : [singleData.overviewImages] : []);
+            setConceptImages(singleData?.conceptImages ? Array.isArray(singleData.conceptImages) ? singleData.conceptImages : [singleData.setConceptImages] : []);
+            setFloorImages(singleData?.floorImages ? Array.isArray(singleData.floorImages) ? singleData.floorImages : [singleData.floorImages] : []);
+            setLocationImages(singleData?.locationImgs ? Array.isArray(singleData.locationImgs) ? singleData.locationImgs : [singleData.locationImgs] : []);
         }
     }, [singleData]);
     if (isLoading) {
         return <p>Loading............</p>
     }
 
-    console.log(singleData)
+
 
     const defaultValues = {
         title: singleData?.title || '',
@@ -169,7 +187,6 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         project_address: singleData?.project_address || '',
         land_area: singleData?.land_area || '',
         storied: singleData?.storied || '',
-        apartment_contains: singleData?.apartment_contains || '',
         overview_Location: singleData?.overview_Location || '',
         short_description: singleData?.short_description || '',
         overview_description: singleData?.overview_description || '',
@@ -183,18 +200,25 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         map_Location: singleData?.map_Location || '',
         location: singleData?.location || '',
         map_description: singleData?.map_description || '',
-        floorImage: singleData?.floorImage || '',
-        conceptImage: singleData?.conceptImage || '',
-        overviewImage: singleData?.overviewImage || '',
-        locationImg: singleData?.locationImg || '',
+        floorImages: singleData?.floorImages || [],
+        conceptImages: singleData?.conceptImages || [],
+        overviewImages: singleData?.overviewImages || [],
+        locationImgs: singleData?.locationImgs || [],
         videoUrls: singleData?.videoUrls || '',
         meta_title: singleData?.meta_title || "",
         meta_description: singleData?.meta_description || "",
         meta_keywords: singleData?.meta_keywords || "",
-        min_price: singleData?.min_price || "",
-        max_price: singleData?.max_price || "",
+        high_budget: singleData?.hight_budget || "",
+        low_budget: singleData?.low_budget || "",
         category: singleData?.category || "",
-   
+        apartment_contains: singleData?.apartment_contains || [],
+        special_amenities: singleData?.special_amenities || [],
+        common_features: singleData?.common_features || [],
+        home_loan_partner: singleData?.home_loan_partner || [],
+
+
+
+
 
     };
 
@@ -215,7 +239,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                             </Stepper>
 
                             <ADForm defaultValues={defaultValues} onSubmit={async (values) => {
-                                // Submit form only when on the last step
+
                                 if (isLastStep) {
                                     await handleSubmit(values);
                                 } else {
@@ -229,12 +253,13 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             <Grid item md={12} sm={12}>
                                                 <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                     <ADImageUpload
-                                                        name="overviewImage"
-                                                        setImageUrl={setOverviewImage}
-                                                        imageUrl={overviewImage}
-                                                        label="Overview Image"
+                                                        name="overviewImages"
+                                                        setImageUrls={setOverviewImages}
+                                                        imageUrls={overviewImages}
+                                                        label="Overview Images"
                                                         onClick={() => setOverviewImgOpen(true)}
                                                     />
+
 
                                                 </Box>
                                             </Grid>
@@ -257,8 +282,34 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                 <ADInput fullWidth name="storied" label="Storied" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="apartment_contains" label="Apartment Contains" />
+                                                <ADAutoComplete
+                                                    label="Apartment Contains"
+                                                    name="apartment_contains"
+                                                    options={apertmentContains}
+                                                />
                                             </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Special Amenities"
+                                                    name="special_amenities"
+                                                    options={amenities}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Common Features"
+                                                    name="Common Features"
+                                                    options={additionalFeatures}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Home Loan Partner"
+                                                    name="home_loan_partner"
+                                                    options={loan_partner}
+                                                />
+                                            </Grid>
+
                                             <Grid item md={12} sm={12}>
 
                                                 <ADAutoComplete
@@ -284,10 +335,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             <Grid item md={12} sm={12}>
                                                 <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                     <ADImageUpload
-                                                        name="conceptImage"
-                                                        setImageUrl={setConceptImage}
-                                                        imageUrl={conceptImage}
-                                                        label="Select Image"
+                                                        name="conceptImages"
+                                                        setImageUrls={setConceptImages}
+                                                        imageUrls={conceptImages}
+                                                        label="Concept Images"
                                                         onClick={() => setConceptImgOpen(true)}
                                                     />
 
@@ -315,10 +366,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             <Grid item md={12} sm={12}>
                                                 <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                     <ADImageUpload
-                                                        name="floorImage"
-                                                        setImageUrl={setFloorImage}
-                                                        imageUrl={floorImage}
-                                                        label="Select Image"
+                                                        name="floorImages"
+                                                        setImageUrls={setFloorImages}
+                                                        imageUrls={floorImages}
+                                                        label="Floor Images"
                                                         onClick={() => setFloorImgOpen(true)}
                                                     />
 
@@ -348,10 +399,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             <Grid item md={12} sm={12}>
                                                 <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                     <ADImageUpload
-                                                        name="locationImg"
-                                                        setImageUrl={setLocationImg}
-                                                        imageUrl={locationImg}
-                                                        label="Select Image"
+                                                        name="locationImages"
+                                                        setImageUrls={setLocationImages}
+                                                        imageUrls={locationImages}
+                                                        label="Location Images"
                                                         onClick={() => setLocationImgOpen(true)}
                                                     />
 
@@ -415,10 +466,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="max_price" label="Max Price" />
+                                                <ADInput fullWidth name="hight_budget" label="High Budget" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="min_price" label="Min Price" />
+                                                <ADInput fullWidth name="low_budget" label="Low Budget" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
@@ -471,30 +522,31 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                         <GlobalImageSelector
                             open={overviewImgOpen}
                             onClose={() => setOverviewImgOpen(false)}
-                            setSelectedImage={setOverviewImage}
-                            mode="single"
-                            selectedImage={overviewImage}
+                            selectedImage={overviewImages}
+                            setSelectedImage={setOverviewImages}
+                            mode="multiple"
                         />
+
                         <GlobalImageSelector
                             open={conceptImgOpen}
                             onClose={() => setConceptImgOpen(false)}
-                            setSelectedImage={setConceptImage}
-                            mode="single"
-                            selectedImage={conceptImage}
+                            setSelectedImage={setConceptImages}
+                            mode="multiple"
+                            selectedImage={conceptImages}
                         />
                         <GlobalImageSelector
                             open={floorImgOpen}
                             onClose={() => setFloorImgOpen(false)}
-                            setSelectedImage={setFloorImage}
-                            mode="single"
-                            selectedImage={floorImage}
+                            setSelectedImage={setFloorImages}
+                            mode="multiple"
+                            selectedImage={floorImages}
                         />
                         <GlobalImageSelector
                             open={locationImgOpen}
                             onClose={() => setLocationImgOpen(false)}
-                            setSelectedImage={setLocationImg}
-                            mode="single"
-                            selectedImage={locationImg}
+                            setSelectedImage={setLocationImages}
+                            mode="multiple"
+                            selectedImage={locationImages}
                         />
                     </BNPRightSideModal>
                 )

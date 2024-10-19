@@ -118,12 +118,12 @@ const AffiliationPage = () => {
                 <Box>
 
                     <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>All Team member </Typography>
+                        <Typography variant="h5" fontWeight='bold'>All Affilations </Typography>
 
                         <Button
                             onClick={handleOpen}
                             startIcon={<AddCircleOutlineIcon />}>
-                            Create Team
+                            Create Affilations
                         </Button>
 
                     </Box>

@@ -111,94 +111,99 @@ const FAQPage = () => {
 
     return (
         <PageContainer>
-            <DashboardCard>
-                <Box>
+            <>
 
-                    <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>Question & Answer </Typography>
-                        <Button
-                            onClick={handleOpen}
-                            startIcon={<AddCircleOutlineIcon />}>
-                            Create FAQ
-                        </Button>
-                    </Box>
-                    <Box bgcolor="white" padding={3}>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Question</TableCell>
-                                        <TableCell align="center">Answer</TableCell>
-                                        <TableCell align="center">Create Date </TableCell>
+                <DashboardCard>
+                    <>
+                    <Box>
 
-                                        <TableCell align="center">Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {faqData?.data?.faqs?.map((data: TFaq, index: number) => (
-                                        <TableRow
-                                            key={data._id}
-                                            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                        >
-                                            <TableCell align="center">{index + 1}</TableCell>
+<Box display='flex' justifyContent='space-between'>
+    <Typography variant="h5" fontWeight='bold'>Question & Answer </Typography>
+    <Button
+        onClick={handleOpen}
+        startIcon={<AddCircleOutlineIcon />}>
+        Create FAQ
+    </Button>
+</Box>
+<Box bgcolor="white" padding={3}>
+    <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+            <TableHead>
+                <TableRow>
+                    <TableCell align="center">SL No</TableCell>
+                    <TableCell align="center">Question</TableCell>
+                    <TableCell align="center">Answer</TableCell>
+                    <TableCell align="center">Create Date </TableCell>
 
-                                            <TableCell align="center">{data.question.slice(0, 50)}  </TableCell>
-                                            <TableCell align="center">{data.answer.slice(0, 50)}  </TableCell>
+                    <TableCell align="center">Actions</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {faqData?.data?.faqs?.map((data: TFaq, index: number) => (
+                    <TableRow
+                        key={data._id}
+                        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                        <TableCell align="center">{index + 1}</TableCell>
+
+                        <TableCell align="center">{data.question.slice(0, 50)}  </TableCell>
+                        <TableCell align="center">{data.answer.slice(0, 50)}  </TableCell>
 
 
-                                            <TableCell align="center">
-                                                {formatDate(data.createdAt)}
+                        <TableCell align="center">
+                            {formatDate(data.createdAt)}
 
 
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <div className="flex justify-center gap-2 ">
+                        </TableCell>
+                        <TableCell align="center">
+                            <div className="flex justify-center gap-2 ">
 
-                                                    <IconButton
-                                                        sx={{ ...iconButtonStyle, background: '#216740' }}
-                                                        title="Edit"
-                                                        onClick={() => hanldeOpenUpdateModal(data._id)}
-                                                    >
-                                                        <EditIcon sx={iconStyle} />
-                                                    </IconButton>
+                                <IconButton
+                                    sx={{ ...iconButtonStyle, background: '#216740' }}
+                                    title="Edit"
+                                    onClick={() => hanldeOpenUpdateModal(data._id)}
+                                >
+                                    <EditIcon sx={iconStyle} />
+                                </IconButton>
 
-                                                    <IconButton
-                                                        sx={iconButtonStyle}
-                                                        onClick={() => handleDelete(data._id)}
-                                                        title="Delete"
-                                                    >
-                                                        <DeleteIcon sx={iconStyle} className="text-red-600" />
-                                                    </IconButton>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
+                                <IconButton
+                                    sx={iconButtonStyle}
+                                    onClick={() => handleDelete(data._id)}
+                                    title="Delete"
+                                >
+                                    <DeleteIcon sx={iconStyle} className="text-red-600" />
+                                </IconButton>
+                            </div>
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    </TableContainer>
+</Box>
 
-                </Box>
+</Box>
 
-                {open && (
-                    <CreateFAQModal
-                        open={open}
-                        setOpen={handleClose}
+{open && (
+<CreateFAQModal
+    open={open}
+    setOpen={handleClose}
 
-                    />
-                )}
-                {openUpdateModal && (
-                    <UpdateFAQModal
-                        open={openUpdateModal}
-                        setOpen={handleCloseUpdateModal}
-                        id={selectedTortureId}
-                    />
-                )}
-            </DashboardCard>
-            <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
-                <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
-            </Stack>
+/>
+)}
+{openUpdateModal && (
+<UpdateFAQModal
+    open={openUpdateModal}
+    setOpen={handleCloseUpdateModal}
+    id={selectedTortureId}
+/>
+)}
+                    </>
+                </DashboardCard>
+                <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
+                    <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
+                </Stack>
+            </>
 
 
         </PageContainer>

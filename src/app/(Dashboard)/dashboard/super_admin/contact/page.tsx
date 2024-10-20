@@ -15,9 +15,8 @@ import PageContainer from "@/app/(Dashboard)/components/container/PageContainer"
 import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
+import { useDeleteContactMutation, useGetAllContactQuery } from "@/redux/api/informatoinApi";
 
-
-import { useDeleteContactMutation, useGetAllContactQuery, } from "@/redux/api/informatoinApi";
 export type TContact = {
     _id: string,
     first_name: string,

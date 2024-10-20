@@ -15,7 +15,8 @@ import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { additionalFeatures, amenities, apertmentContains, loan_partner, nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
+import ADSelect from "@/components/Forms/Select";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -97,11 +98,6 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         data.conceptImages = conceptImages;
         data.overviewImages = overviewImages;
 
-        if (Array.isArray(data.category)) {
-            data.category = data.category.filter(key => key != null).map(
-                (key: any) => (typeof key === 'object' ? key.category : key)
-            );
-        }
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.meta_keywords : key)
@@ -189,6 +185,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         storied: singleData?.storied || '',
         overview_Location: singleData?.overview_Location || '',
         short_description: singleData?.short_description || '',
+        sub_short_description: singleData?.sub_short_description || '',
         overview_description: singleData?.overview_description || '',
         concept_description: singleData?.concept_description || '',
         floor_description: singleData?.floor_description || '',
@@ -210,7 +207,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         meta_keywords: singleData?.meta_keywords || "",
         high_budget: singleData?.hight_budget || "",
         low_budget: singleData?.low_budget || "",
-        category: singleData?.category || "",
+        category: singleData?.category || '',
+        looking_for: singleData?.looking_for || '',
         apartment_contains: singleData?.apartment_contains || [],
         special_amenities: singleData?.special_amenities || [],
         common_features: singleData?.common_features || [],
@@ -320,6 +318,9 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADTextArea fullWidth name="short_description" label="Short Description" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADTextArea fullWidth name="sub_short_description" label="Short Description 2 " />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
@@ -458,10 +459,18 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             </Grid>
 
                                             <Grid item md={12} sm={12}>
-                                                <ADAutoComplete
+                                                <ADSelect
                                                     label="Category"
                                                     name="category"
-                                                    options={tags}
+                                                    items={category}
+                                                />
+
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Looking For"
+                                                    name="looking_for"
+                                                    items={lookingFor}
                                                 />
 
                                             </Grid>

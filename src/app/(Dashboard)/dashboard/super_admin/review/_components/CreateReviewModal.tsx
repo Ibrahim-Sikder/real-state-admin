@@ -2,8 +2,6 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import ADEditor from "@/components/Forms/JodiEditor";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
 import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -13,7 +11,6 @@ import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { useCreateTeamMutation } from "@/redux/api/teamApi";
 import { useCreatereviewMutation } from "@/redux/api/reviewApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -40,15 +37,15 @@ type TProps = {
 
 const CreateReviewModal = ({ open, setOpen }: TProps) => {
     const [createReview] = useCreatereviewMutation()
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
 
     const handleSubmit = async (values: FieldValues) => {
         const modifiedValues = {
             ...values,
-            image
+            images
 
         };
 
@@ -76,10 +73,10 @@ const CreateReviewModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                         <ADImageUpload
-                                            name="image"
-                                            setImageUrl={setImage}
-                                            imageUrl={image}
-                                            label="Select Image"
+                                            name="images"
+                                            setImageUrls={setImages}
+                                            imageUrls={images}
+                                            label="Select Images"
                                             onClick={() => setImageOpen(true)}
                                         />
 
@@ -122,7 +119,7 @@ const CreateReviewModal = ({ open, setOpen }: TProps) => {
                                     />
                                 </Grid>
                                 <Grid item md={12} sm={12}>
-                                    <Typography  variant="h5" fontWeight='semibold'>Description</Typography>
+                                    <Typography variant="h5" fontWeight='semibold'>Description</Typography>
                                     <ADTextArea sx={{ border: '1px solid black', borderRadius: '3px' }} name="description" minRows={5} />
                                 </Grid>
                             </Grid>
@@ -136,9 +133,9 @@ const CreateReviewModal = ({ open, setOpen }: TProps) => {
             <GlobalImageSelector
                 open={imageOpen}
                 onClose={() => setImageOpen(false)}
-                setSelectedImage={setImage}
-                mode="single"
-                selectedImage={image}
+                setSelectedImage={setImages}
+                mode="multiple"
+                selectedImage={images}
             />
 
         </>

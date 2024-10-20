@@ -16,30 +16,29 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
 import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
+import Swal from "sweetalert2";
 import Image from "next/image";
-import profile from '../../../../../assets/images/profile.png'
+import { useDeleteAffiliationMutation, useGetAllAffiliationQuery } from "@/redux/api/affiliationApi";
 import CreateGalleryModal from "./_components/CreateGalleryModal";
 import UpdateGalleryModal from "./_components/UpdateGalleryModal";
-import { useDeleteImgGalleryMutation, useGetAllImgGalleryQuery } from "@/redux/api/imageGalleryApi";
-
-
-export type TPrison = {
+import { useGetAllPhotoQuery } from "@/redux/api/photoGalleryApi";
+export type TTeam = {
     _id: string,
     name: string,
     date: string,
     createdAt: string,
-    thumnail_img: string,
+    images: string[],
+
 };
 
 
-const PrisonsPage = () => {
+const AffiliationPage = () => {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: galleryData, isLoading } = useGetAllImgGalleryQuery({ page: currentPage, limit: 5 });
-    const [deleteImgGallery] = useDeleteImgGalleryMutation();
-
+    const { data: imageGalleryData, isLoading } = useGetAllPhotoQuery({ page: currentPage, limit: 5 });
+    const [deleteAffiliation] = useDeleteAffiliationMutation();
     const handleOpen = () => setOpen(true);
 
     const hanldeOpenUpdateModal = (id: string) => {
@@ -53,19 +52,36 @@ const PrisonsPage = () => {
     if (isLoading) {
         return <p>Loading...........</p>;
     }
+    console.log(imageGalleryData)
 
     const handleDelete = async (id: string) => {
-        try {
-            const res = await deleteImgGallery(id).unwrap()
-            toast.success(res?.message);
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to delete this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
 
-        } catch (err: any) {
-            toast.error(err.message)
-        }
+            if (result.isConfirmed) {
+                try {
+                    await deleteAffiliation(id).unwrap();
 
-    }
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your affiliation has been deleted.",
+                        icon: "success"
+                    });
+                } catch (err: any) {
+                    toast.error(err.message);
+                }
+            }
+        });
+    };
 
-    const { meta } = galleryData?.data || { meta: {}, oppresses: [] };
+    const { meta } = imageGalleryData?.data || { meta: {}, team: [] };
     const { totalPage = 5 } = meta || {};
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
@@ -80,54 +96,88 @@ const PrisonsPage = () => {
         return `${day}-${month}-${year}`;
     }
 
+    const iconButtonStyle = {
+        width: '30px',
+        height: '30px',
+        borderRadius: '100%',
+        padding: '0px',
+        color: 'white',
+        background: 'red',
+        marginLeft: '2px',
+        marginRight: '2px',
+        '&:hover': {
+            background: 'black',
+            color: 'white',
+        },
+    };
+    const iconStyle = { fontSize: '20px' }
+
     return (
-        <PageContainer title="Sample Page" description="this is Sample page">
+        <PageContainer>
             <DashboardCard>
                 <Box>
 
                     <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'> Gallery </Typography>
+                        <Typography variant="h5" fontWeight='bold'>Photo Gallery List </Typography>
 
                         <Button
                             onClick={handleOpen}
                             startIcon={<AddCircleOutlineIcon />}>
-                            Create Gallery
+                            Create Photo Gallery
                         </Button>
 
                     </Box>
+
                     <Box bgcolor="white" padding={3}>
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell align="center">SL No</TableCell>
                                         <TableCell align="center">Image</TableCell>
-                                        <TableCell align="center">Name</TableCell>
-                                        <TableCell align="center">Created At </TableCell>
+                                        <TableCell align="center">Created Date</TableCell>
                                         <TableCell align="center">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {galleryData?.data?.galleries?.map((data: TPrison, index: number) => (
+                                    {imageGalleryData?.data?.galleries?.map((data: TTeam, index: number) => (
                                         <TableRow
                                             key={data._id}
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
-                                            <TableCell align="center"> <Image width={50} height={50} className="w-20" src={data.thumnail_img} alt='activity' /></TableCell>
-
-                                            <TableCell align="center">{data.name}</TableCell>
-                                            <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
+                                            <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="center">
-                                                <div className="flex justify-center">
-                                                    <IconButton
+                                                {
+                                                    data.images.slice(0, 1).map((img) => (
+                                                        <>
+                                                            <Image width={50} height={50} className="w-20" src={img} alt='activity' />
+                                                        </>
+                                                    ))
+                                                }
+                                            </TableCell>
 
-                                                        title="Edit">
-                                                        <EditIcon onClick={() => hanldeOpenUpdateModal(data._id)} />
-                                                    </IconButton>
+                                            <TableCell align="center">
+                                                {formatDate(data.createdAt)}
+
+
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <div className="flex justify-center gap-2 ">
+
                                                     <IconButton
+                                                        sx={{ ...iconButtonStyle, background: '#216740' }}
+                                                        title="Edit"
+                                                        onClick={() => hanldeOpenUpdateModal(data._id)}
+                                                    >
+                                                        <EditIcon sx={iconStyle} />
+                                                    </IconButton>
+
+                                                    <IconButton
+                                                        sx={iconButtonStyle}
                                                         onClick={() => handleDelete(data._id)}
                                                         title="Delete"
                                                     >
-                                                        <DeleteIcon className="text-red-600" />
+                                                        <DeleteIcon sx={iconStyle} className="text-red-600" />
                                                     </IconButton>
                                                 </div>
                                             </TableCell>
@@ -154,10 +204,11 @@ const PrisonsPage = () => {
                 </Box>
             </DashboardCard>
             <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
-                <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="primary" />
+                <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
             </Stack>
+
         </PageContainer>
     );
 };
 
-export default PrisonsPage;
+export default AffiliationPage;

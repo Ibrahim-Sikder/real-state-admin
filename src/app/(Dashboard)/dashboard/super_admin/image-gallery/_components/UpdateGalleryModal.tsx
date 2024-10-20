@@ -2,14 +2,15 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
+import { Box, Button, Grid, styled,  } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
 import { toast } from "sonner";
-import GalleryUploader from "@/components/Forms/GalleryUploader";
-import { useGetSingleImgGalleryQuery, useUpdateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
+import ADDatePicker from "@/components/Forms/DatePicker";
+import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
+import ADImageUpload from "@/components/Forms/FileUpload";
+import { useGetSinglePhotoQuery, useUpdatePhotoMutation } from "@/redux/api/photoGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -17,9 +18,6 @@ const FormContainer = styled(Box)(({ theme }) => ({
     flexDirection: "column",
     gap: theme.spacing(3),
 }));
-
-
-
 const FormSection = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
@@ -35,25 +33,27 @@ type TProps = {
 };
 
 
+const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
-const UpdateDisappearancesModal = ({ open, setOpen, id }: TProps) => {
-    const [updateImgGallery] = useUpdateImgGalleryMutation()
-    const { data, isLoading } = useGetSingleImgGalleryQuery(id)
-    const [thumnailImg, setThumnailImg] = useState<string>("")
-    const [thumnailImgOpen, setThumnailImgOpen] = useState(false)
+    const [updatePhoto] = useUpdatePhotoMutation()
+    const { data, isLoading } = useGetSinglePhotoQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.thumnail_img = thumnailImg;
+        data.image = images;
+
+
         try {
-            const res = await updateImgGallery({ ...data, id }).unwrap();
-          
-            toast.success(res.message);
+            const res = await updatePhoto({ ...data, id }).unwrap();
+
+            toast.success(res?.message);
 
             setOpen(false);
         } catch (err: any) {
-            console.error('Error:', err);
-            toast.error(err.message);
+
+            toast.error(err?.message);
         }
     };
 
@@ -61,7 +61,7 @@ const UpdateDisappearancesModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setThumnailImg(singleData?.thumnail_img || "");
+            setImages(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -69,11 +69,11 @@ const UpdateDisappearancesModal = ({ open, setOpen, id }: TProps) => {
     }
 
     const defaultValues = {
-        thumnail_img: singleData?.thumnail_img || '',
-        name: singleData?.name || '',
-        slug: singleData?.slug || ''
-    };
+        images: singleData?.images || "",
+        createdAt: singleData?.createdAt,
+        title: singleData?.title
 
+    };
 
     return (
         <>
@@ -81,56 +81,57 @@ const UpdateDisappearancesModal = ({ open, setOpen, id }: TProps) => {
                 isLoading ? (
                     <p>Loading........</p>
                 ) : (
-                    <BNPModal open={open} setOpen={setOpen} title="Update Programm & Notice ">
+                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Photo Gallery">
                         <FormContainer>
                             <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
                                 <FormSection>
                                     <Grid container spacing={2}>
                                         <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="name"
-                                                label="Name"
-                                                placeholder="Name"
+                                            <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                <ADImageUpload
+                                                    name="images"
+                                                    setImageUrls={setImages}
+                                                    imageUrls={images}
+                                                    label="Select Images"
+                                                    onClick={() => setImageOpen(true)}
+                                                />
 
-                                            />
+                                            </Box>
                                         </Grid>
                                         <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="slug"
-                                                label="Slug"
-                                                placeholder="Name"
+                                    <ADInput
+                                        fullWidth
+                                        name="title"
+                                        label="Title"
+                                        placeholder="Title"
 
-                                            />
-                                        </Grid>
+                                    />
+                                </Grid>
+
                                         <Grid item md={12} sm={12}>
-                                            <Typography marginBottom='5px' fontWeight='bold'>Media </Typography>
-                                            <GalleryUploader
-                                                onClick={() => setThumnailImgOpen(true)}
-                                                name="thumnail_img"
-                                                setImageUrl={setThumnailImg}
-                                                imageUrl={thumnailImg}
-                                                label="Thumnail Image"
+                                            <ADDatePicker
+                                                fullWidth
+                                                name="createdAt"
+                                                label="Date"
                                             />
-
-
                                         </Grid>
-
 
                                     </Grid>
-                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Gallery  </Button></Box>
+
+                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
                                 </FormSection>
                             </ADForm>
                         </FormContainer>
                         <GlobalImageSelector
-                            open={thumnailImgOpen}
-                            onClose={() => setThumnailImgOpen(false)}
-                            setSelectedImage={setThumnailImg}
-                            mode="single"
-                            selectedImage={thumnailImg}
+                            open={imageOpen}
+                            onClose={() => setImageOpen(false)}
+                            setSelectedImage={setImages}
+                            mode="multiple"
+                            selectedImage={images}
                         />
-                    </BNPModal>
+
+
+                    </BNPRightSideModal>
                 )
             }
 
@@ -138,4 +139,4 @@ const UpdateDisappearancesModal = ({ open, setOpen, id }: TProps) => {
     );
 };
 
-export default UpdateDisappearancesModal;
+export default UpdateGalleryModal;

@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { useCreateTeamMutation } from "@/redux/api/teamApi";
 import { useCreateAffiliationMutation } from "@/redux/api/affiliationApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -40,15 +39,15 @@ type TProps = {
 
 const CreateAffiliationModal = ({ open, setOpen }: TProps) => {
     const [createAffiliation] = useCreateAffiliationMutation()
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
 
     const handleSubmit = async (values: FieldValues) => {
         const modifiedValues = {
             ...values,
-            image
+            images
 
         };
 
@@ -76,10 +75,10 @@ const CreateAffiliationModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                         <ADImageUpload
-                                            name="image"
-                                            setImageUrl={setImage}
-                                            imageUrl={image}
-                                            label="Select Image"
+                                            name="images"
+                                            setImageUrls={setImages}
+                                            imageUrls={images}
+                                            label="Select Images"
                                             onClick={() => setImageOpen(true)}
                                         />
 
@@ -107,9 +106,9 @@ const CreateAffiliationModal = ({ open, setOpen }: TProps) => {
             <GlobalImageSelector
                 open={imageOpen}
                 onClose={() => setImageOpen(false)}
-                setSelectedImage={setImage}
-                mode="single"
-                selectedImage={image}
+                setSelectedImage={setImages}
+                mode="multiple"
+                selectedImage={images}
             />
 
         </>

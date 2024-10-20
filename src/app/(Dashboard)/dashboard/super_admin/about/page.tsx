@@ -26,7 +26,7 @@ export type TTeam = {
     name: string,
     date: string,
     social_link: string,
-    image: string,
+    images: string[],
 
 };
 
@@ -146,7 +146,13 @@ const ProjectPage = () => {
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="center">
-                                                <Image width={50} height={50} className="w-20" src={data.image} alt='activity' />
+                                                {
+                                                    data.images.slice(0, 1).map((img) => (
+                                                        <>
+                                                            <Image width={50} height={50} className="w-20" src={img} alt='activity' />
+                                                        </>
+                                                    ))
+                                                }
                                             </TableCell>
                                             <TableCell align="center">{data.name} </TableCell>
 

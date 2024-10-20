@@ -1,28 +1,40 @@
 export const nearby_location = [
-    { title: "The Westin Dhaka" },
-    { title: "Amari Dhaka" },
-    { title: "Gulshan Lake" },
-    { title: "USA Embassy" },
-    { title: "Diplomatic Zone" },
-    { title: "American International School" },
-    { title: "Scholastica School" },
-    { title: "Izumi Japanese Kitchen" },
-    { title: "Jamuna Future Park" },
-  ];
-  
-  export const tags = [
-    { title: "Construction Services" },
-    { title: "Interior Services" },
-    { title: "Landscape Design" },
-    { title: "Renovation Services" }
-  ];
-  export const apertmentContains = [
-    { title: "3 Beds" },
-    { title: "3 Baths" },
-    { title: "3 Verandas" },
-    { title: "Dining" },
-    { title: "Living" },
-    { title: "Family Living" }
+  { title: "The Westin Dhaka" },
+  { title: "Amari Dhaka" },
+  { title: "Gulshan Lake" },
+  { title: "USA Embassy" },
+  { title: "Diplomatic Zone" },
+  { title: "American International School" },
+  { title: "Scholastica School" },
+  { title: "Izumi Japanese Kitchen" },
+  { title: "Jamuna Future Park" },
+];
+
+export const tags = [
+  { title: "On going project" },
+  { title: "Upcoming project" },
+  { title: "Landscape Design" },
+  { title: "Complete project" },
+];
+export const category = ['On going project','On going project','Complete project'];
+// export const category = [
+//   { title: "On going project" },
+//   { title: "Upcoming project" },
+//   { title: "Complete project" },
+// // ];
+// export const lookingFor = [
+//   { title: "Commercial" },
+//   { title: "Residential" },
+// ];
+export const lookingFor = ['Commercial','Residential'];
+
+export const apertmentContains = [
+  { title: "3 Beds" },
+  { title: "3 Baths" },
+  { title: "3 Verandas" },
+  { title: "Dining" },
+  { title: "Living" },
+  { title: "Family Living" },
 ];
 
 export const amenities = [
@@ -31,7 +43,7 @@ export const amenities = [
   { title: "Guest Waiting Room" },
   { title: "Community Area" },
   { title: "Prayer Room" },
-  { title: "Library" }
+  { title: "Library" },
 ];
 export const additionalFeatures = [
   { title: "Garden Space" },
@@ -39,9 +51,8 @@ export const additionalFeatures = [
   { title: "Generator Room" },
   { title: "Substation" },
   { title: "Plantation" },
-  { title: "Cloth Drying Area" }
+  { title: "Cloth Drying Area" },
 ];
-
 
 export const loan_partner = [
   { title: "DBH" },
@@ -49,5 +60,5 @@ export const loan_partner = [
   { title: "IPDC" },
   { title: "City Bank Limited" },
   { title: "Mutual Trust Bank" },
-  { title: "BRAC Bank Limited" }
+  { title: "BRAC Bank Limited" },
 ];

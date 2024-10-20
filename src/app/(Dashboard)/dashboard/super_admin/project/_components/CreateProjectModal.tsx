@@ -13,8 +13,9 @@ import ADImageUpload from "@/components/Forms/FileUpload";
 import ADAutoComplete from "@/components/Forms/AutoComplete";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { additionalFeatures, amenities, apertmentContains, loan_partner, nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
 import ADCheckbox from "@/components/Forms/checkbox";
+import ADSelect from "@/components/Forms/Select";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -137,7 +138,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                     </Stepper>
 
                     <ADForm onSubmit={async (values) => {
-                        // Submit form only when on the last step
+     
                         if (isLastStep) {
                             await handleSubmit(values);
                         } else {
@@ -218,6 +219,9 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <ADTextArea fullWidth name="short_description" label="Short Description" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADTextArea fullWidth name="sub_short_description" label="Short Description 2 " />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
@@ -359,10 +363,18 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADAutoComplete
+                                        <ADSelect
                                             label="Category"
                                             name="category"
-                                            options={tags}
+                                            items={category}
+                                        />
+
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADSelect
+                                            label="Looing For"
+                                            name="looking_for"
+                                            items={lookingFor}
                                         />
 
                                     </Grid>

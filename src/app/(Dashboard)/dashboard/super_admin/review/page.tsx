@@ -27,7 +27,7 @@ export type TTeam = {
     name: string,
     date: string,
     designation: string,
-    image: string,
+    images: string[],
     description: string,
     createdAt: string,
     title: string,
@@ -55,7 +55,7 @@ const ProjectPage = () => {
     if (isLoading) {
         return <p>Loading...........</p>;
     }
-    console.log(reviewData)
+
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -152,11 +152,17 @@ const ProjectPage = () => {
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
-                                            <Image width={50} height={50} className="w-20" src={data.image} alt='activity' />
+                                            {
+                                                data.images.slice(0, 1).map((img) => (
+                                                    <>
+                                                        <Image width={50} height={50} className="w-20" src={img} alt='activity' />
+                                                    </>
+                                                ))
+                                            }
                                             <TableCell align="center">{data.name} </TableCell>
                                             <TableCell align="center">{data.designation} </TableCell>
                                             <TableCell align="center">{data.title} </TableCell>
-                                            <TableCell align="center">{data.description} </TableCell>
+                                            <TableCell align="center">{data.description.slice(0, 50)} </TableCell>
 
                                             <TableCell align="center">
                                                 {formatDate(data.createdAt)}

@@ -38,14 +38,14 @@ type TProps = {
 
 
 const UpdateServiceModal = ({ open, setOpen, id }: TProps) => {
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
     const [updateService] = useUpdateServoceMutation()
     const { data, isLoading } = useGetSingleServoceQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.image = image;
+        data.images = images;
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.meta_keywords : key)
@@ -69,7 +69,7 @@ const UpdateServiceModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setImage(singleData?.image || "");
+            setImages(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -101,10 +101,10 @@ const UpdateServiceModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid item md={12} sm={12}>
                                             <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                 <ADImageUpload
-                                                    name="image"
-                                                    setImageUrl={setImage}
-                                                    imageUrl={image}
-                                                    label="Select Image"
+                                                    name="images"
+                                                    setImageUrls={setImages}
+                                                    imageUrls={images}
+                                                    label="Select Images"
                                                     onClick={() => setImageOpen(true)}
                                                 />
 
@@ -179,10 +179,11 @@ const UpdateServiceModal = ({ open, setOpen, id }: TProps) => {
                         <GlobalImageSelector
                             open={imageOpen}
                             onClose={() => setImageOpen(false)}
-                            setSelectedImage={setImage}
-                            mode="single"
-                            selectedImage={image}
+                            setSelectedImage={setImages}
+                            mode="multiple"
+                            selectedImage={images}
                         />
+
 
                     </BNPRightSideModal>
                 )

@@ -37,15 +37,15 @@ type TProps = {
 
 
 const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
     const [updateAffiliation] = useUpdateAffiliationMutation()
     const { data, isLoading } = useGetSingleAffiliationQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.image = image;
+        data.image = images;
 
 
         try {
@@ -55,7 +55,7 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
 
             setOpen(false);
         } catch (err: any) {
-           
+
             toast.error(err?.message);
         }
     };
@@ -64,7 +64,7 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setImage(singleData?.image || "");
+            setImages(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -72,7 +72,7 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
     }
 
     const defaultValues = {
-        image: singleData?.image || "",
+        images: singleData?.images || "",
         createdAt: singleData?.createdAt
 
     };
@@ -85,45 +85,45 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
                 ) : (
                     <BNPRightSideModal open={open} setOpen={setOpen} title="Update Team">
                         <FormContainer>
-                        <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
-                        <FormSection>
-                            <Grid container spacing={2}>
-                                <Grid item md={12} sm={12}>
-                                    <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
-                                        <ADImageUpload
-                                            name="image"
-                                            setImageUrl={setImage}
-                                            imageUrl={image}
-                                            label="Select Image"
-                                            onClick={() => setImageOpen(true)}
-                                        />
+                            <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
+                                <FormSection>
+                                    <Grid container spacing={2}>
+                                        <Grid item md={12} sm={12}>
+                                            <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                <ADImageUpload
+                                                    name="images"
+                                                    setImageUrls={setImages}
+                                                    imageUrls={images}
+                                                    label="Select Images"
+                                                    onClick={() => setImageOpen(true)}
+                                                />
+
+                                            </Box>
+                                        </Grid>
 
 
-                                    </Box>
-                                </Grid>
+                                        <Grid item md={12} sm={12}>
+                                            <ADDatePicker
+                                                fullWidth
+                                                name="createdAt"
+                                                label="Date"
+                                            />
+                                        </Grid>
 
+                                    </Grid>
 
-                                <Grid item md={12} sm={12}>
-                                    <ADDatePicker
-                                        fullWidth
-                                        name="createdAt"
-                                        label="Date"
-                                    />
-                                </Grid>
-
-                            </Grid>
-
-                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
-                        </FormSection>
-                    </ADForm>
+                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
+                                </FormSection>
+                            </ADForm>
                         </FormContainer>
                         <GlobalImageSelector
                             open={imageOpen}
                             onClose={() => setImageOpen(false)}
-                            setSelectedImage={setImage}
-                            mode="single"
-                            selectedImage={image}
+                            setSelectedImage={setImages}
+                            mode="multiple"
+                            selectedImage={images}
                         />
+
 
                     </BNPRightSideModal>
                 )

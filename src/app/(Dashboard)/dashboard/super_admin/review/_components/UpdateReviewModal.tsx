@@ -13,7 +13,7 @@ import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useGetSingleTeamQuery, useUpdateTeamMutation } from "@/redux/api/teamApi";
-import { useGetSinglereviewQuery, useUpdatereviewMutation } from "@/redux/api/reviewApi";
+import { useGetSingleAffiliationQuery, useUpdateAffiliationMutation } from "@/redux/api/affiliationApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -37,19 +37,19 @@ type TProps = {
 
 
 const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
-    const [updateReview] = useUpdatereviewMutation()
-    const { data, isLoading } = useGetSinglereviewQuery(id)
+    const [updateAffiliation] = useUpdateAffiliationMutation()
+    const { data, isLoading } = useGetSingleAffiliationQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.image = image;
+        data.image = images;
 
 
         try {
-            const res = await updateReview({ ...data, id }).unwrap();
+            const res = await updateAffiliation({ ...data, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -64,7 +64,7 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setImage(singleData?.image || "");
+            setImages(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -72,13 +72,8 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
     }
 
     const defaultValues = {
-        name: singleData?.name || "",
-        image: singleData?.image || "",
-        designation: singleData?.designation || "",
-        date: singleData?.date || "",
-        createdAt: singleData?.createdAt || "",
-        description: singleData?.description,
-        title: singleData?.title
+        images: singleData?.images || "",
+        createdAt: singleData?.createdAt
 
     };
 
@@ -96,68 +91,39 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid item md={12} sm={12}>
                                             <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                 <ADImageUpload
-                                                    name="image"
-                                                    setImageUrl={setImage}
-                                                    imageUrl={image}
-                                                    label="Select Image"
+                                                    name="images"
+                                                    setImageUrls={setImages}
+                                                    imageUrls={images}
+                                                    label="Select Images"
                                                     onClick={() => setImageOpen(true)}
                                                 />
-
 
                                             </Box>
                                         </Grid>
 
 
                                         <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="name"
-                                                label="Name"
-                                                autoFocus={true}
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="designation"
-                                                label="Designation"
-                                                autoFocus={true}
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="title"
-                                                label="Title"
-                                                autoFocus={true}
-                                            />
-                                        </Grid>
-
-                                        <Grid item md={12} sm={12}>
                                             <ADDatePicker
                                                 fullWidth
                                                 name="createdAt"
-                                                label="Post Date"
-
+                                                label="Date"
                                             />
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <Typography variant="h5" fontWeight='semibold'>Description</Typography>
-                                            <ADTextArea sx={{ border: '1px solid black', borderRadius: '3px' }} name="description" minRows={5} />
-                                        </Grid>
+
                                     </Grid>
 
-                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Update Review </Button></Box>
+                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
                                 </FormSection>
                             </ADForm>
                         </FormContainer>
                         <GlobalImageSelector
                             open={imageOpen}
                             onClose={() => setImageOpen(false)}
-                            setSelectedImage={setImage}
-                            mode="single"
-                            selectedImage={image}
+                            setSelectedImage={setImages}
+                            mode="multiple"
+                            selectedImage={images}
                         />
+
 
                     </BNPRightSideModal>
                 )

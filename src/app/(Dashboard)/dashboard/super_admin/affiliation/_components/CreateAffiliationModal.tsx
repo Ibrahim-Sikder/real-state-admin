@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { useCreateTeamMutation } from "@/redux/api/teamApi";
+import { useCreateAffiliationMutation } from "@/redux/api/affiliationApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -37,8 +37,8 @@ type TProps = {
 };
 
 
-const CreateTeamModal = ({ open, setOpen }: TProps) => {
-    const [createTeam] = useCreateTeamMutation()
+const CreateAffiliationModal = ({ open, setOpen }: TProps) => {
+    const [createAffiliation] = useCreateAffiliationMutation()
     const [images, setImages] = useState<string[]>([]);
     const [imageOpen, setImageOpen] = useState(false);
 
@@ -52,7 +52,7 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
         };
 
         try {
-            const res = await createTeam(modifiedValues).unwrap();
+            const res = await createAffiliation(modifiedValues).unwrap();
 
             toast.success(res.message);
             setOpen(false);
@@ -67,7 +67,7 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
 
     return (
         <>
-            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Create Team Member ">
+            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Create Affiliation ">
                 <FormContainer>
                     <ADForm onSubmit={handleSubmit}>
                         <FormSection>
@@ -83,40 +83,21 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
                                         />
 
 
-
                                     </Box>
                                 </Grid>
 
 
                                 <Grid item md={12} sm={12}>
-                                    <ADInput
-                                        fullWidth
-                                        name="name"
-                                        label="Name"
-                                        autoFocus={true}
-                                    />
-                                </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <ADInput
-                                        fullWidth
-                                        name="designation"
-                                        label="Designation"
-                                        autoFocus={true}
-                                    />
-                                </Grid>
-                               
-
-                                <Grid item md={12} sm={12}>
                                     <ADDatePicker
                                         fullWidth
-                                        name="date"
-                                        label="Post Date"
-
+                                        name="createdAt"
+                                        label="Date"
                                     />
                                 </Grid>
+
                             </Grid>
 
-                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Team </Button></Box>
+                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
                         </FormSection>
                     </ADForm>
                 </FormContainer>
@@ -134,4 +115,4 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
     );
 };
 
-export default CreateTeamModal;
+export default CreateAffiliationModal;

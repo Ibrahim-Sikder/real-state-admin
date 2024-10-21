@@ -16,46 +16,29 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
 import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
-import Image from "next/image";
 import Swal from "sweetalert2";
-import CreateProjectModal from "./_components/CreateProjectModal";
-import UpdateProjectModal from "./_components/UpdateProjectModal";
-import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
-export type TOppressed = {
+import { useDeleteTeamMutation, useGetAllTeamQuery } from "@/redux/api/teamApi";
+import Image from "next/image";
+import CreateAffiliationModal from "./_components/CreateAffiliationModal";
+import UpdateAffiliationModal from "./_components/UpdateAffiliationModal";
+import { useDeleteAffiliationMutation, useGetAllAffiliationQuery } from "@/redux/api/affiliationApi";
+export type TTeam = {
     _id: string,
-    title: string;
-    sub_title: string;
-    project_type: string;
-    project_address: string;
-    land_area: string;
-    storied: string;
-    apartment_contains: string;
-    overview_Location: string[];
-    short_description: string;
-    overview_description: string;
-    concept_Location?: string[];
-    concept_description?: string;
-    floor_title?: string;
-    floor_Location?: string[];
-    floor_description?: string;
-    map_Location?: string[];
-    map_description?: string;
-    conceptImage?: string;
-    overviewImage?: string;
-    videoUrls?: string[];
-    locationImg: string,
+    name: string,
+    date: string,
     createdAt: string,
-    floorImage: string,
+    images: string[],
+
 };
 
 
-const ProjectPage = () => {
+const AffiliationPage = () => {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: projectData, isLoading } = useGetAllProjectQuery({ page: currentPage, limit: 10 });
-    const [deleteProject] = useDeleteProjectMutation();
+    const { data: affiliationData, isLoading } = useGetAllAffiliationQuery({ page: currentPage, limit: 5 });
+    const [deleteAffiliation] = useDeleteAffiliationMutation();
     const handleOpen = () => setOpen(true);
 
     const hanldeOpenUpdateModal = (id: string) => {
@@ -69,6 +52,7 @@ const ProjectPage = () => {
     if (isLoading) {
         return <p>Loading...........</p>;
     }
+    console.log(affiliationData)
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -83,11 +67,11 @@ const ProjectPage = () => {
 
             if (result.isConfirmed) {
                 try {
-                    await deleteProject(id).unwrap();
+                    await deleteAffiliation(id).unwrap();
 
                     Swal.fire({
                         title: "Deleted!",
-                        text: "Your activity has been deleted.",
+                        text: "Your affiliation has been deleted.",
                         icon: "success"
                     });
                 } catch (err: any) {
@@ -97,7 +81,7 @@ const ProjectPage = () => {
         });
     };
 
-    const { meta } = projectData?.data || { meta: {}, oppresses: [] };
+    const { meta } = affiliationData?.data || { meta: {}, team: [] };
     const { totalPage = 5 } = meta || {};
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
@@ -127,7 +111,6 @@ const ProjectPage = () => {
         },
     };
     const iconStyle = { fontSize: '20px' }
-    console.log(projectData)
 
     return (
         <PageContainer>
@@ -135,44 +118,49 @@ const ProjectPage = () => {
                 <Box>
 
                     <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>Our Project </Typography>
+                        <Typography variant="h5" fontWeight='bold'>All Affilations </Typography>
 
                         <Button
                             onClick={handleOpen}
                             startIcon={<AddCircleOutlineIcon />}>
-                            Create Project
+                            Create Affilations
                         </Button>
 
                     </Box>
+
                     <Box bgcolor="white" padding={3}>
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Title</TableCell>
-                                        <TableCell align="center">Sub Title</TableCell>
-                                        <TableCell align="center">Short Description </TableCell>
+                                        <TableCell align="center">Image</TableCell>
                                         <TableCell align="center">Created Date</TableCell>
                                         <TableCell align="center">Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {projectData?.data?.projects?.map((data: TOppressed, index: number) => (
+                                    {affiliationData?.data?.affilations?.map((data: TTeam, index: number) => (
                                         <TableRow
                                             key={data._id}
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
-                                            {/* <TableCell align="center">
-                                                <Image width={50} height={50} className="w-20" src={data.floorImage} alt='activity' />
-                                            </TableCell> */}
-                                            <TableCell align="center">{data.title} </TableCell>
+                                            <TableCell align="center">
+                                            {
+                                                data.images.slice(0, 1).map((img) => (
+                                                    <>
+                                                        <Image width={50} height={50} className="w-20" src={img} alt='activity' />
+                                                    </>
+                                                ))
+                                            }
+                                            </TableCell>
 
-                                            <TableCell align="center">{data.sub_title}</TableCell>
-                                            <TableCell align="center">{data.short_description.slice(0,50)}</TableCell>
+                                            <TableCell align="center">
+                                                {formatDate(data.createdAt)}
 
-                                            <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
+
+                                            </TableCell>
                                             <TableCell align="center">
                                                 <div className="flex justify-center gap-2 ">
 
@@ -200,14 +188,14 @@ const ProjectPage = () => {
                         </TableContainer>
                     </Box>
                     {open && (
-                        <CreateProjectModal
+                        <CreateAffiliationModal
                             open={open}
                             setOpen={handleClose}
 
                         />
                     )}
                     {openUpdateModal && (
-                        <UpdateProjectModal
+                        <UpdateAffiliationModal
                             open={openUpdateModal}
                             setOpen={handleCloseUpdateModal}
                             id={selectedTortureId}
@@ -223,4 +211,4 @@ const ProjectPage = () => {
     );
 };
 
-export default ProjectPage;
+export default AffiliationPage;

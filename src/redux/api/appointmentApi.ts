@@ -33,4 +33,5 @@ export const {
   useGetAllAppointmentQuery,
   useDeleteAppointmentMutation,
   useUpdateAppointmentMutation,
+  
 } = appointmentApi;

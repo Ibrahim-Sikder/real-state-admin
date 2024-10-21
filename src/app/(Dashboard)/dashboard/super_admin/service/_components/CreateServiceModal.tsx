@@ -41,19 +41,19 @@ type TProps = {
 
 const CreateServiceModal = ({ open, setOpen }: TProps) => {
     const [createService] = useCreateServoceMutation()
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
 
-    
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
     const handleSubmit = async (values: FieldValues) => {
         const modifiedValues = {
             ...values,
             meta_keywords: values.meta_keywords || [],
-            image,
+            images,
 
         };
+
 
         try {
             const res = await createService(modifiedValues).unwrap();
@@ -77,10 +77,10 @@ const CreateServiceModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                         <ADImageUpload
-                                            name="image"
-                                            setImageUrl={setImage}
-                                            imageUrl={image}
-                                            label="Select Image"
+                                            name="images"
+                                            setImageUrls={setImages}
+                                            imageUrls={images}
+                                            label="Select Images"
                                             onClick={() => setImageOpen(true)}
                                         />
 
@@ -157,10 +157,12 @@ const CreateServiceModal = ({ open, setOpen }: TProps) => {
             <GlobalImageSelector
                 open={imageOpen}
                 onClose={() => setImageOpen(false)}
-                setSelectedImage={setImage}
-                mode="single"
-                selectedImage={image}
+                setSelectedImage={setImages}
+                mode="multiple"
+                selectedImage={images}
             />
+
+
 
         </>
     );

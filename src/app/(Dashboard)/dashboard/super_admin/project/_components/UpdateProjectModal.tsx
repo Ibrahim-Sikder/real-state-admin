@@ -3,18 +3,20 @@
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
 import ADEditor from "@/components/Forms/JodiEditor";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack } from "@mui/material";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
 import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
-import ADDatePicker from "@/components/Forms/DatePicker";
 import ADAutoComplete from "@/components/Forms/AutoComplete";
 import { useGetSingleProjectQuery, useUpdateProjectMutation } from "@/redux/api/projectApi";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { tags } from "@/constant";
+
+import ADImageUpload from "@/components/Forms/FileUpload";
+import { useCreateProjectMutation } from "@/redux/api/projectApi";
+import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
+import ADSelect from "@/components/Forms/Select";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -36,32 +38,118 @@ type TProps = {
     id: string | null,
 };
 
+const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour"];
 
 const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
-    const [thumnailImg, setThumnailImg] = useState<string>("")
-    const [bangla_img, setBangla_img] = useState<string>('')
-    const [eng_img, setEng_img] = useState<string>('')
-    const [thumnailImgOpen, setThumnailImgOpen] = useState(false)
-    const [bngImgOpen, setBngImgOpen] = useState(false)
-    const [engImgOpen, setEngImgOpen] = useState(false)
-    const [updateProject] = useUpdateProjectMutation()
-    const { data, isLoading } = useGetSingleProjectQuery(id)
+    const { data, isLoading } = useGetSingleProjectQuery(id);
+    console.log(data)
+    const [updateProject] = useUpdateProjectMutation();
+    const [overviewImages, setOverviewImages] = useState<string[]>([]);
+    const [conceptImages, setConceptImages] = useState<string[]>([]);
+    const [floorImages, setFloorImages] = useState<string[]>([]);
+    const [locationImages, setLocationImages] = useState<string[]>([]);
+    const [overviewImgOpen, setOverviewImgOpen] = useState(false);
+    const [conceptImgOpen, setConceptImgOpen] = useState(false);
+    const [floorImgOpen, setFloorImgOpen] = useState(false);
+    const [locationImgOpen, setLocationImgOpen] = useState(false);
+
+    const [activeStep, setActiveStep] = useState(0);
+    const isLastStep = activeStep === steps.length - 1;
+
+
+    const handleNext = () => {
+        setActiveStep((prevStep) => prevStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevStep) => prevStep - 1);
+    };
+    const [videoUrls, setVideoUrls] = useState<string[]>(['']);
+
+
+
+    const handleAddVideoUrl = () => {
+        setVideoUrls([...videoUrls, '']);
+    };
+
+
+    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+        const newVideoUrls = [...videoUrls];
+        newVideoUrls[index] = event.target.value || '';
+        setVideoUrls(newVideoUrls);
+    };
+
+
+
+    const handleRemoveVideoUrl = () => {
+        const newVideoUrls = [...videoUrls];
+
+
+        if (newVideoUrls.length > 1) {
+            newVideoUrls.pop();
+            setVideoUrls(newVideoUrls);
+            setVideoUrls(videoUrls);
+        }
+    };
 
     const handleSubmit = async (data: FieldValues) => {
 
-        data.img_bangla = bangla_img;
-        data.img_english = eng_img;
-        data.thumnail_img = thumnailImg;
+        data.floorImages = floorImages;
+        data.conceptImages = conceptImages;
+        data.overviewImages = overviewImages;
+
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.meta_keywords : key)
+            );
+        }
+        if (Array.isArray(data.videoUrls)) {
+            data.videoUrls = data.videoUrls.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.videoUrls : key)
+            );
+        }
+        if (Array.isArray(data.map_Location)) {
+            data.map_Location = data.map_Location.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.map_Location : key)
+            );
+        }
+        if (Array.isArray(data.floor_Location)) {
+            data.floor_Location = data.floor_Location.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.floor_Location : key)
+            );
+        }
+        if (Array.isArray(data.concept_Location)) {
+            data.concept_Location = data.concept_Location.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.concept_Location : key)
+            );
+        }
+        if (Array.isArray(data.overview_Location)) {
+            data.overview_Location = data.overview_Location.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.overview_Location : key)
+            );
+        }
+
+
+        if (Array.isArray(data.special_amenities)) {
+            data.special_amenities = data.special_amenities.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.special_amenities : key)
+            );
+        }
+        if (Array.isArray(data.common_features)) {
+            data.common_features = data.common_features.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.common_features : key)
+            );
+        }
+        if (Array.isArray(data.home_loan_partner)) {
+            data.home_loan_partner = data.home_loan_partner.filter(key => key != null).map(
+                (key: any) => (typeof key === 'object' ? key.home_loan_partner : key)
             );
         }
 
 
         try {
             const res = await updateProject({ ...data, id }).unwrap();
-       
+
             toast.success(res.message);
 
             setOpen(false);
@@ -74,36 +162,62 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const singleData = data?.data;
 
     useEffect(() => {
+
         if (singleData) {
-            setBangla_img(singleData?.img_bangla || "");
-            setEng_img(singleData?.img_english || "");
-            setThumnailImg(singleData?.thumnail_img || "");
+            setOverviewImages(singleData?.overviewImages ? Array.isArray(singleData.overviewImages) ? singleData.overviewImages : [singleData.overviewImages] : []);
+            setConceptImages(singleData?.conceptImages ? Array.isArray(singleData.conceptImages) ? singleData.conceptImages : [singleData.setConceptImages] : []);
+            setFloorImages(singleData?.floorImages ? Array.isArray(singleData.floorImages) ? singleData.floorImages : [singleData.floorImages] : []);
+            setLocationImages(singleData?.locationImgs ? Array.isArray(singleData.locationImgs) ? singleData.locationImgs : [singleData.locationImgs] : []);
         }
     }, [singleData]);
     if (isLoading) {
         return <p>Loading............</p>
     }
 
+
+
     const defaultValues = {
-        bangla_title: singleData?.bangla_title || "",
-        english_title: singleData?.english_title || "",
-        category: singleData?.category || [],
-        bangla_description: singleData?.bangla_description || "",
-        english_description: singleData?.english_description || "",
-        bangla_short_description: singleData?.bangla_short_description || "",
-        english_short_description: singleData?.english_short_description || "",
-        img_tagline_bangla: singleData?.img_tagline_bangla || "",
-        img_tagline_english: singleData?.img_tagline_english || "",
-        admin_name: singleData?.admin_name || "",
-        date: singleData?.date || "",
-        createdAt: singleData?.createdAt || "",
-        post_by: singleData?.post_by || "",
-        meta_description: singleData?.meta_description || "",
-        meta_keywords: singleData.meta_keywords || [],
+        title: singleData?.title || '',
+        sub_title: singleData?.sub_title || '',
+        project_type: singleData?.project_type || '',
+        project_address: singleData?.project_address || '',
+        land_area: singleData?.land_area || '',
+        storied: singleData?.storied || '',
+        overview_Location: singleData?.overview_Location || '',
+        short_description: singleData?.short_description || '',
+        sub_short_description: singleData?.sub_short_description || '',
+        overview_description: singleData?.overview_description || '',
+        concept_description: singleData?.concept_description || '',
+        floor_description: singleData?.floor_description || '',
+        virtual_description: singleData?.virtual_description || '',
+        floor_title: singleData?.floor_title || '',
+        concept_Location: singleData?.concept_Location || '',
+        floor_Location: singleData?.floor_Location || '',
+        virtual_Location: singleData?.virtual_Location || '',
+        map_Location: singleData?.map_Location || '',
+        location: singleData?.location || '',
+        map_description: singleData?.map_description || '',
+        floorImages: singleData?.floorImages || [],
+        conceptImages: singleData?.conceptImages || [],
+        overviewImages: singleData?.overviewImages || [],
+        locationImgs: singleData?.locationImgs || [],
+        videoUrls: singleData?.videoUrls || '',
         meta_title: singleData?.meta_title || "",
-        // thumnail_img: singleData?.thumnail_img || '',
-        // img_english: singleData?.img_english || '',
-        // img_bangla: singleData?.img_bangla || '',
+        meta_description: singleData?.meta_description || "",
+        meta_keywords: singleData?.meta_keywords || "",
+        high_budget: singleData?.hight_budget || "",
+        low_budget: singleData?.low_budget || "",
+        category: singleData?.category || '',
+        looking_for: singleData?.looking_for || '',
+        apartment_contains: singleData?.apartment_contains || [],
+        special_amenities: singleData?.special_amenities || [],
+        common_features: singleData?.common_features || [],
+        home_loan_partner: singleData?.home_loan_partner || [],
+
+
+
+
+
     };
 
     return (
@@ -114,157 +228,334 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                 ) : (
                     <BNPRightSideModal open={open} setOpen={setOpen} title="Update Project">
                         <FormContainer>
-                            <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
-                                <FormSection>
-                                    <Grid container spacing={2}>
-                                        <Grid item md={12} sm={12}>
-                                            {/* <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
-                                                <BNPImageUpload
-                                                    name="img_bangla"
-                                                    setImageUrl={setBangla_img}
-                                                    imageUrl={bangla_img}
-                                                    label="Image in Bangla"
-                                                    onClick={() => setBngImgOpen(true)}
+                            <Stepper activeStep={activeStep} alternativeLabel>
+                                {steps.map((label) => (
+                                    <Step key={label}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
+
+                            <ADForm defaultValues={defaultValues} onSubmit={async (values) => {
+
+                                if (isLastStep) {
+                                    await handleSubmit(values);
+                                } else {
+                                    handleNext();
+                                }
+                            }}>
+                                {activeStep === 0 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+
+                                            <Grid item md={12} sm={12}>
+                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                    <ADImageUpload
+                                                        name="overviewImages"
+                                                        setImageUrls={setOverviewImages}
+                                                        imageUrls={overviewImages}
+                                                        label="Overview Images"
+                                                        onClick={() => setOverviewImgOpen(true)}
+                                                    />
+
+
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="title" label="Title" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="sub_title" label="Sub Title" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="project_type" label="Project Type " />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="project_address" label="Project Address" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="land_area" label="Land Area" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="storied" label="Storied" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Apartment Contains"
+                                                    name="apartment_contains"
+                                                    options={apertmentContains}
                                                 />
-                                                <BNPImageUpload
-                                                    name="img_english"
-                                                    setImageUrl={setEng_img}
-                                                    imageUrl={eng_img}
-                                                    label="Image in English"
-                                                    onClick={() => setEngImgOpen(true)}
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Special Amenities"
+                                                    name="special_amenities"
+                                                    options={amenities}
                                                 />
-                                                <BNPImageUpload
-                                                    onClick={() => setThumnailImgOpen(true)}
-                                                    name="thumnail_img"
-                                                    setImageUrl={setThumnailImg}
-                                                    imageUrl={thumnailImg}
-                                                    label="Thumnail Image"
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Common Features"
+                                                    name="Common Features"
+                                                    options={additionalFeatures}
                                                 />
-                                            </Box> */}
-                                        </Grid>
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Home Loan Partner"
+                                                    name="home_loan_partner"
+                                                    options={loan_partner}
+                                                />
+                                            </Grid>
 
+                                            <Grid item md={12} sm={12}>
 
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="img_tagline_bangla"
-                                                label="Image Tageline Bangla"
-                                                autoFocus={true}
-                                            />
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="overview_Location"
+                                                    options={nearby_location}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADTextArea fullWidth name="short_description" label="Short Description" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADTextArea fullWidth name="sub_short_description" label="Short Description 2 " />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
+                                                <ADEditor name="overview_description" label="" />
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="img_tagline_english"
-                                                label="Image Tageline English"
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="admin_name"
-                                                label="Admin Name"
-                                                autoFocus
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADDatePicker
-                                                fullWidth
-                                                name="date"
-                                                label="Post Date"
+                                    </FormSection>
+                                )}
 
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="bangla_title"
-                                                label="Title Bangla"
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="english_title"
-                                                label="Title English"
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADTextArea
-                                                fullWidth
-                                                name="bangla_short_description"
-                                                label="Short Description Banlga"
-                                                maxRows={8}
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADTextArea
-                                                fullWidth
-                                                name="english_short_description"
-                                                label="Short Description English"
-                                            />
-                                        </Grid>
+                                {activeStep === 1 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                    <ADImageUpload
+                                                        name="conceptImages"
+                                                        setImageUrls={setConceptImages}
+                                                        imageUrls={conceptImages}
+                                                        label="Concept Images"
+                                                        onClick={() => setConceptImgOpen(true)}
+                                                    />
 
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
 
-                                        <Grid item md={12} sm={12}>
-                                            <ADEditor name="bangla_description" label="Banlga Description" />
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="concept_Location"
+                                                    options={nearby_location}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
+                                                <ADEditor name="concept_description" label="" />
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADEditor name="english_description" label="English Description" />
-                                        </Grid>
+                                    </FormSection>
+                                )}
 
-                                    </Grid>
-                                    <Typography variant="h5" fontWeight='bold' >SEO Section </Typography>
-                                    <Grid container spacing={2}>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="meta_title"
-                                                label="Meta Title"
-                                                placeholder="Enter Meta Title"
-                                            />
-                                        </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADAutoComplete
-                                                label="Meta Keywords"
-                                                name="meta_keywords"
-                                                options={tags}
-                                            />
+                                {activeStep === 2 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                    <ADImageUpload
+                                                        name="floorImages"
+                                                        setImageUrls={setFloorImages}
+                                                        imageUrls={floorImages}
+                                                        label="Floor Images"
+                                                        onClick={() => setFloorImgOpen(true)}
+                                                    />
 
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="floor_title" label="Floor Title" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="floor_Location"
+                                                    options={nearby_location}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
+                                                <ADEditor name="floor_description" label="" />
+                                            </Grid>
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADTextArea
-                                                name="meta_description"
-                                                label="Meta Description"
-                                                placeholder="Enter Meta Description"
-                                            />
+                                    </FormSection>
+                                )}
+                                {activeStep === 3 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                    <ADImageUpload
+                                                        name="locationImages"
+                                                        setImageUrls={setLocationImages}
+                                                        imageUrls={locationImages}
+                                                        label="Location Images"
+                                                        onClick={() => setLocationImgOpen(true)}
+                                                    />
+
+                                                </Box>
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="location" label="Location" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="map_Location"
+                                                    options={nearby_location}
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
+                                                <ADEditor name="map_description" label="" />
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                    <Box display='flex' justifyContent='center' marginTop='20px' >
-                                        <Button type="submit">Update Project </Button></Box>
-                                </FormSection>
+                                    </FormSection>
+                                )}
+                                {activeStep === 4 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+
+                                                {singleData?.videoUrls?.map((url: any, index: number) => (
+                                                    <ADInput
+                                                        key={index}
+                                                        name={`videoUrls.${index}`}
+                                                        label="Video URL"
+                                                        onChange={(event) => handleInputChange(index, event)}
+                                                        fullWidth
+                                                    />
+                                                ))}
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Stack spacing={2} direction='row'>
+
+                                                    <Button onClick={handleAddVideoUrl}>Add</Button>
+                                                    <Button sx={{ background: 'red' }} onClick={handleRemoveVideoUrl}>Remove</Button>
+                                                </Stack>
+                                            </Grid>
+
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="virtual_Location"
+                                                    options={nearby_location}
+                                                />
+                                            </Grid>
+
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Category"
+                                                    name="category"
+                                                    items={category}
+                                                />
+
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Looking For"
+                                                    name="looking_for"
+                                                    items={lookingFor}
+                                                />
+
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="hight_budget" label="High Budget" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="low_budget" label="Low Budget" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
+                                                    Buy an Apartment on Easy Installments
+                                                </Typography>
+                                                <ADEditor name="virtual_description" label="" />
+                                            </Grid>
+                                        </Grid>
+                                        <Typography variant="h5" fontWeight='bold' >SEO Section </Typography>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput
+                                                    fullWidth
+                                                    name="meta_title"
+                                                    label="Meta Title"
+                                                    placeholder="Enter Meta Title"
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADAutoComplete
+                                                    label="Meta Keywords"
+                                                    name="meta_keywords"
+                                                    options={tags}
+                                                />
+
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADTextArea
+                                                    name="meta_description"
+                                                    label="Meta Description"
+                                                    placeholder="Enter Meta Description"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </FormSection>
+                                )}
+
+                                <Box display="flex" justifyContent="space-between" mt={3}>
+                                    <Button disabled={activeStep === 0} onClick={handleBack}>
+                                        Back
+                                    </Button>
+
+                                    <Button type="submit">
+                                        {isLastStep ? "Submit" : "Next"}
+                                    </Button>
+                                </Box>
                             </ADForm>
                         </FormContainer>
+
                         <GlobalImageSelector
-                            open={thumnailImgOpen}
-                            onClose={() => setThumnailImgOpen(false)}
-                            setSelectedImage={setThumnailImg}
-                            mode="single"
-                            selectedImage={thumnailImg}
+                            open={overviewImgOpen}
+                            onClose={() => setOverviewImgOpen(false)}
+                            selectedImage={overviewImages}
+                            setSelectedImage={setOverviewImages}
+                            mode="multiple"
+                        />
+
+                        <GlobalImageSelector
+                            open={conceptImgOpen}
+                            onClose={() => setConceptImgOpen(false)}
+                            setSelectedImage={setConceptImages}
+                            mode="multiple"
+                            selectedImage={conceptImages}
                         />
                         <GlobalImageSelector
-                            open={bngImgOpen}
-                            onClose={() => setBngImgOpen(false)}
-                            setSelectedImage={setBangla_img}
-                            mode="single"
-                            selectedImage={bangla_img}
+                            open={floorImgOpen}
+                            onClose={() => setFloorImgOpen(false)}
+                            setSelectedImage={setFloorImages}
+                            mode="multiple"
+                            selectedImage={floorImages}
                         />
                         <GlobalImageSelector
-                            open={engImgOpen}
-                            onClose={() => setEngImgOpen(false)}
-                            setSelectedImage={setEng_img}
-                            mode="single"
-                            selectedImage={eng_img}
+                            open={locationImgOpen}
+                            onClose={() => setLocationImgOpen(false)}
+                            setSelectedImage={setLocationImages}
+                            mode="multiple"
+                            selectedImage={locationImages}
                         />
                     </BNPRightSideModal>
                 )

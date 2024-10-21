@@ -19,7 +19,7 @@ const projectApi = baseApi.injectEndpoints({
       invalidatesTags: ["project"],
     }),
     getAllProject: builder.query({
-      query: ({ page = 1, limit = 5 }) => ({
+      query: ({ page = 1, limit = 10 }) => ({
         url: `/project`,
         method: "GET",
         params: { page, limit },

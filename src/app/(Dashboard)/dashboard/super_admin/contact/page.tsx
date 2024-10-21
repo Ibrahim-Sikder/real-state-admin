@@ -5,27 +5,26 @@ import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
-import EditIcon from "@mui/icons-material/Edit";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Pagination, Stack, Typography } from "@mui/material";
+import {  Pagination, Stack, Typography } from "@mui/material";
 import TableContainer from "@mui/material/TableContainer";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
 import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
-import Image from "next/image";
 import Swal from "sweetalert2";
+import { useDeleteContactMutation, useGetAllContactQuery } from "@/redux/api/informatoinApi";
 
-import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
 export type TContact = {
     _id: string,
-    name: string,
+    first_name: string,
+    last_name: string,
     email: string,
     message: string,
     date: string,
+    createdAt: string,
 
 };
 
@@ -35,8 +34,8 @@ const AppointmentPage = () => {
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: projectData, isLoading } = useGetAllProjectQuery({ page: currentPage, limit: 5 });
-    const [deleteProject] = useDeleteProjectMutation();
+    const { data: contactData, isLoading } = useGetAllContactQuery({ page: currentPage, limit: 5 });
+    const [deleteContact] = useDeleteContactMutation();
     const handleOpen = () => setOpen(true);
 
     const hanldeOpenUpdateModal = (id: string) => {
@@ -64,7 +63,7 @@ const AppointmentPage = () => {
 
             if (result.isConfirmed) {
                 try {
-                    await deleteProject(id).unwrap();
+                    await deleteContact(id).unwrap();
 
                     Swal.fire({
                         title: "Deleted!",
@@ -78,7 +77,7 @@ const AppointmentPage = () => {
         });
     };
 
-    const { meta } = projectData?.data || { meta: {}, oppresses: [] };
+    const { meta } = contactData?.data || { meta: {}, oppresses: [] };
     const { totalPage = 5 } = meta || {};
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
@@ -133,44 +132,31 @@ const AppointmentPage = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {projectData?.data?.projects?.map((data: TContact, index: number) => (
+                                    {contactData?.data?.informations?.map((data: TContact, index: number) => (
                                         <TableRow
                                             key={data._id}
                                             sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                                         >
                                             <TableCell align="center">{index + 1}</TableCell>
-                                            <TableCell align="center">
-                                                {/* <Image width={50} height={50} className="w-20" src={data.img_bangla} alt='activity' /> */}
-                                            </TableCell>
-                                            <TableCell align="center">name </TableCell>
 
-                                            <TableCell align="center">email</TableCell>
+                                            <TableCell align="center">{`${data.first_name} ${data.last_name}`} </TableCell>
 
-                                            <TableCell align="center">message</TableCell>
+                                            <TableCell align="center">{data.email}</TableCell>
+
+                                            <TableCell align="center">{data.message}</TableCell>
                                             <TableCell align="center">
-                                                {/* {formatDate(data.date)} */}
-                                                date
+                                                {formatDate(data.createdAt)}
+
 
                                             </TableCell>
                                             <TableCell align="center">
-                                                <div className="flex justify-center gap-2 ">
-
-                                                    <IconButton
-                                                        sx={{ ...iconButtonStyle, background: '#216740' }}
-                                                        title="Edit"
-                                                        onClick={() => hanldeOpenUpdateModal(data._id)}
-                                                    >
-                                                        <EditIcon sx={iconStyle} />
-                                                    </IconButton>
-
-                                                    <IconButton
-                                                        sx={iconButtonStyle}
-                                                        onClick={() => handleDelete(data._id)}
-                                                        title="Delete"
-                                                    >
-                                                        <DeleteIcon sx={iconStyle} className="text-red-600" />
-                                                    </IconButton>
-                                                </div>
+                                                <IconButton
+                                                    sx={iconButtonStyle}
+                                                    onClick={() => handleDelete(data._id)}
+                                                    title="Delete"
+                                                >
+                                                    <DeleteIcon sx={iconStyle} className="text-red-600" />
+                                                </IconButton>
                                             </TableCell>
                                         </TableRow>
                                     ))}

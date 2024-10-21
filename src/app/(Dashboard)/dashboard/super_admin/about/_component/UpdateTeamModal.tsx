@@ -36,15 +36,15 @@ type TProps = {
 
 
 const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
-    const [image, setImage] = useState<string>("")
-    const [imageOpen, setImageOpen] = useState(false)
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
     const [updateTeam] = useUpdateTeamMutation()
     const { data, isLoading } = useGetSingleTeamQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.img_bangla = image;
+        data.img_bangla = images;
 
 
         try {
@@ -54,7 +54,7 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
 
             setOpen(false);
         } catch (err: any) {
-           
+
             toast.error(err?.message);
         }
     };
@@ -63,7 +63,7 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setImage(singleData?.image || "");
+            setImages(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -93,12 +93,13 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid item md={12} sm={12}>
                                             <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                                 <ADImageUpload
-                                                    name="image"
-                                                    setImageUrl={setImage}
-                                                    imageUrl={image}
-                                                    label="Select Image"
+                                                    name="images"
+                                                    setImageUrls={setImages}
+                                                    imageUrls={images}
+                                                    label="Select Images"
                                                     onClick={() => setImageOpen(true)}
                                                 />
+
 
 
                                             </Box>
@@ -121,14 +122,7 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
                                                 autoFocus={true}
                                             />
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                            <ADInput
-                                                fullWidth
-                                                name="social_link"
-                                                label="Social Link"
-                                                autoFocus={true}
-                                            />
-                                        </Grid>
+
 
                                         <Grid item md={12} sm={12}>
                                             <ADDatePicker
@@ -147,11 +141,10 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
                         <GlobalImageSelector
                             open={imageOpen}
                             onClose={() => setImageOpen(false)}
-                            setSelectedImage={setImage}
-                            mode="single"
-                            selectedImage={image}
+                            setSelectedImage={setImages}
+                            mode="multiple"
+                            selectedImage={images}
                         />
-
                     </BNPRightSideModal>
                 )
             }

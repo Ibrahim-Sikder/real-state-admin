@@ -2,15 +2,18 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import { Box, Button, Grid, styled,  } from "@mui/material";
+import ADEditor from "@/components/Forms/JodiEditor";
+import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
+import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
-import { useGetSinglePhotoQuery, useUpdatePhotoMutation } from "@/redux/api/photoGalleryApi";
+import { useGetSingleTeamQuery, useUpdateTeamMutation } from "@/redux/api/teamApi";
+import { useGetSingleAffiliationQuery, useUpdateAffiliationMutation } from "@/redux/api/affiliationApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -33,20 +36,20 @@ type TProps = {
 };
 
 
-const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
+const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
     const [images, setImages] = useState<string[]>([]);
     const [imageOpen, setImageOpen] = useState(false);
 
 
-    const [updatePhoto] = useUpdatePhotoMutation()
-    const { data, isLoading } = useGetSinglePhotoQuery(id)
+    const [updateAffiliation] = useUpdateAffiliationMutation()
+    const { data, isLoading } = useGetSingleAffiliationQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
         data.image = images;
 
 
         try {
-            const res = await updatePhoto({ ...data, id }).unwrap();
+            const res = await updateAffiliation({ ...data, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -70,8 +73,7 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
 
     const defaultValues = {
         images: singleData?.images || "",
-        createdAt: singleData?.createdAt,
-        title: singleData?.title
+        createdAt: singleData?.createdAt
 
     };
 
@@ -81,7 +83,7 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
                 isLoading ? (
                     <p>Loading........</p>
                 ) : (
-                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Photo Gallery">
+                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Team">
                         <FormContainer>
                             <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
                                 <FormSection>
@@ -98,15 +100,7 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
 
                                             </Box>
                                         </Grid>
-                                        <Grid item md={12} sm={12}>
-                                    <ADInput
-                                        fullWidth
-                                        name="title"
-                                        label="Title"
-                                        placeholder="Title"
 
-                                    />
-                                </Grid>
 
                                         <Grid item md={12} sm={12}>
                                             <ADDatePicker
@@ -139,4 +133,4 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
     );
 };
 
-export default UpdateGalleryModal;
+export default UpdateAffiliationModal;

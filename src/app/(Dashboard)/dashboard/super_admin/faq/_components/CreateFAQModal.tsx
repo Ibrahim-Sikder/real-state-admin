@@ -2,18 +2,14 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import ADEditor from "@/components/Forms/JodiEditor";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
+import { Box, Button, Grid, styled } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
-import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
-import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { useCreateTeamMutation } from "@/redux/api/teamApi";
+import { useCreateFaqMutation } from "@/redux/api/faqApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -37,22 +33,22 @@ type TProps = {
 };
 
 
-const CreateTeamModal = ({ open, setOpen }: TProps) => {
-    const [createTeam] = useCreateTeamMutation()
-    const [images, setImages] = useState<string[]>([]);
-    const [imageOpen, setImageOpen] = useState(false);
+const CreateFAQModal = ({ open, setOpen }: TProps) => {
+    const [createFAQ] = useCreateFaqMutation()
+    const [image, setImage] = useState<string>("")
+    const [imageOpen, setImageOpen] = useState(false)
 
 
 
     const handleSubmit = async (values: FieldValues) => {
         const modifiedValues = {
             ...values,
-            images
+            image
 
         };
 
         try {
-            const res = await createTeam(modifiedValues).unwrap();
+            const res = await createFAQ(modifiedValues).unwrap();
 
             toast.success(res.message);
             setOpen(false);
@@ -67,44 +63,31 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
 
     return (
         <>
-            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Create Team Member ">
+            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Create FAQ ">
                 <FormContainer>
                     <ADForm onSubmit={handleSubmit}>
                         <FormSection>
                             <Grid container spacing={2}>
-                                <Grid item md={12} sm={12}>
-                                    <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
-                                        <ADImageUpload
-                                            name="images"
-                                            setImageUrls={setImages}
-                                            imageUrls={images}
-                                            label="Select Images"
-                                            onClick={() => setImageOpen(true)}
-                                        />
 
-
-
-                                    </Box>
-                                </Grid>
 
 
                                 <Grid item md={12} sm={12}>
                                     <ADInput
                                         fullWidth
-                                        name="name"
-                                        label="Name"
+                                        name="question"
+                                        label="Question"
                                         autoFocus={true}
                                     />
                                 </Grid>
                                 <Grid item md={12} sm={12}>
                                     <ADInput
                                         fullWidth
-                                        name="designation"
-                                        label="Designation"
+                                        name="answer"
+                                        label="Answer"
                                         autoFocus={true}
                                     />
                                 </Grid>
-                               
+
 
                                 <Grid item md={12} sm={12}>
                                     <ADDatePicker
@@ -116,22 +99,16 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
                                 </Grid>
                             </Grid>
 
-                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Team </Button></Box>
+                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add FAQ </Button></Box>
                         </FormSection>
                     </ADForm>
                 </FormContainer>
 
             </BNPRightSideModal>
-            <GlobalImageSelector
-                open={imageOpen}
-                onClose={() => setImageOpen(false)}
-                setSelectedImage={setImages}
-                mode="multiple"
-                selectedImage={images}
-            />
+           
 
         </>
     );
 };
 
-export default CreateTeamModal;
+export default CreateFAQModal;

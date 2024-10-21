@@ -2,15 +2,19 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
+import ADEditor from "@/components/Forms/JodiEditor";
 import BNPModal from "@/components/Shared/Modal/BNPModal";
 import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
-
+import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
-import GalleryUploader from "@/components/Forms/GalleryUploader";
-import { useCreateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
+import ADDatePicker from "@/components/Forms/DatePicker";
+import ADImageUpload from "@/components/Forms/FileUpload";
+import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
+import { useCreateAffiliationMutation } from "@/redux/api/affiliationApi";
+import { useCreatePhotoMutation } from "@/redux/api/photoGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -18,7 +22,6 @@ const FormContainer = styled(Box)(({ theme }) => ({
     flexDirection: "column",
     gap: theme.spacing(3),
 }));
-
 
 
 const FormSection = styled(Box)(({ theme }) => ({
@@ -36,83 +39,87 @@ type TProps = {
 
 
 const CreateGalleryModal = ({ open, setOpen }: TProps) => {
-    const [createImgGallery] = useCreateImgGalleryMutation()
-    const [thumnailImg, setThumnailImg] = useState<string>("");
-    const [thumnailImgOpen, setThumnailImgOpen] = useState(false);
+    const [createPhoto] = useCreatePhotoMutation()
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
+
 
 
     const handleSubmit = async (values: FieldValues) => {
         const modifiedValues = {
             ...values,
-            category: values.category || [],
-            meta_keywords: values.meta_keywords || [],
-            thumnail_img: thumnailImg,
+            images
 
         };
+
         try {
-            const res = await createImgGallery(modifiedValues).unwrap();
-    
+            const res = await createPhoto(modifiedValues).unwrap();
+
             toast.success(res.message);
             setOpen(false);
         } catch (err: any) {
-            console.error("Error:", err);
+
             toast.error(err?.data?.message);
         }
     };
 
+
+
+
     return (
         <>
-            <BNPModal sx={{ width: '700px', margin: '0 auto' }} open={open} setOpen={setOpen} title="Add Photo Gallery ">
+            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Add Photo Gallery ">
                 <FormContainer>
                     <ADForm onSubmit={handleSubmit}>
                         <FormSection>
                             <Grid container spacing={2}>
                                 <Grid item md={12} sm={12}>
-                                    <ADInput
-                                        fullWidth
-                                        name="name"
-                                        label="Name"
-                                        placeholder="Name"
+                                    <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                        <ADImageUpload
+                                            name="images"
+                                            setImageUrls={setImages}
+                                            imageUrls={images}
+                                            label="Select Images"
+                                            onClick={() => setImageOpen(true)}
+                                        />
 
-                                    />
+
+                                    </Box>
                                 </Grid>
                                 <Grid item md={12} sm={12}>
                                     <ADInput
                                         fullWidth
-                                        name="slug"
-                                        label="Slug"
-                                        placeholder="Name"
+                                        name="title"
+                                        label="Title"
+                                        placeholder="Title"
 
                                     />
                                 </Grid>
+
                                 <Grid item md={12} sm={12}>
-                                    <Typography marginBottom='5px' fontWeight='bold'>Media </Typography>
-                                    <GalleryUploader
-                                        onClick={() => setThumnailImgOpen(true)}
-                                        name="thumnail_img"
-                                        setImageUrl={setThumnailImg}
-                                        imageUrl={thumnailImg}
-                                        label="Thumnail Image"
+                                    <ADDatePicker
+                                        fullWidth
+                                        name="createdAt"
+                                        label="Date"
                                     />
-
-
                                 </Grid>
-
 
                             </Grid>
-                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Gallery  </Button></Box>
+
+                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
                         </FormSection>
                     </ADForm>
                 </FormContainer>
 
-            </BNPModal>
+            </BNPRightSideModal>
             <GlobalImageSelector
-                open={thumnailImgOpen}
-                onClose={() => setThumnailImgOpen(false)}
-                setSelectedImage={setThumnailImg}
-                mode="single"
-                selectedImage={thumnailImg}
+                open={imageOpen}
+                onClose={() => setImageOpen(false)}
+                setSelectedImage={setImages}
+                mode="multiple"
+                selectedImage={images}
             />
+
         </>
     );
 };

@@ -2,16 +2,16 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
-import { Box, Button, Grid, styled } from "@mui/material";
+import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
-import { toast } from "sonner";
-import ADImageUpload from "@/components/Forms/FileUpload";
-import { useCreatlBannerMutation } from "@/redux/api/bannerApi";
 import ADTextArea from "@/components/Forms/TextArea";
+import { toast } from "sonner";
+import ADDatePicker from "@/components/Forms/DatePicker";
+import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
+import { useCreatereviewMutation } from "@/redux/api/reviewApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -35,33 +35,37 @@ type TProps = {
 };
 
 
+const CreateReviewModal = ({ open, setOpen }: TProps) => {
+    const [createReview] = useCreatereviewMutation()
+    const [images, setImages] = useState<string[]>([]);
+    const [imageOpen, setImageOpen] = useState(false);
 
 
-const CreateBannerModal = ({ open, setOpen }: TProps) => {
-    const [createBanner] = useCreatlBannerMutation()
-    const [image, setImage] = useState<string>('')
-    const [profileOpen, setProfileOpen] = useState(false)
+
     const handleSubmit = async (values: FieldValues) => {
-
         const modifiedValues = {
             ...values,
-            profile: image
+            images
 
         };
 
         try {
-            const res = await createBanner(modifiedValues).unwrap();
+            const res = await createReview(modifiedValues).unwrap();
+
             toast.success(res.message);
             setOpen(false);
         } catch (err: any) {
+
             toast.error(err?.data?.message);
         }
     };
 
 
+
+
     return (
         <>
-            <BNPRightSideModal width='600px' open={open} setOpen={setOpen} title="Create Banner ">
+            <BNPRightSideModal sx={{ width: '500px' }} open={open} setOpen={setOpen} title="Create Review ">
                 <FormContainer>
                     <ADForm onSubmit={handleSubmit}>
                         <FormSection>
@@ -69,15 +73,18 @@ const CreateBannerModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
                                         <ADImageUpload
-                                            name="image"
-                                            setImageUrl={setImage}
-                                            imageUrl={image}
-                                            label="Image"
-                                            onClick={() => setProfileOpen(true)}
+                                            name="images"
+                                            setImageUrls={setImages}
+                                            imageUrls={images}
+                                            label="Select Images"
+                                            onClick={() => setImageOpen(true)}
                                         />
+
 
                                     </Box>
                                 </Grid>
+
+
                                 <Grid item md={12} sm={12}>
                                     <ADInput
                                         fullWidth
@@ -89,40 +96,50 @@ const CreateBannerModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <ADInput
                                         fullWidth
+                                        name="designation"
+                                        label="Designation"
+                                        autoFocus={true}
+                                    />
+                                </Grid>
+                                <Grid item md={12} sm={12}>
+                                    <ADInput
+                                        fullWidth
                                         name="title"
                                         label="Title"
                                         autoFocus={true}
                                     />
                                 </Grid>
+
                                 <Grid item md={12} sm={12}>
-                                    <ADTextArea
+                                    <ADDatePicker
                                         fullWidth
-                                        name="description"
-                                        label="Description"
+                                        name="createdAt"
+                                        label="Post Date"
+
                                     />
                                 </Grid>
                                 <Grid item md={12} sm={12}>
-                                    <Button fullWidth type="submit">Add Banner </Button>
+                                    <Typography variant="h5" fontWeight='semibold'>Description</Typography>
+                                    <ADTextArea sx={{ border: '1px solid black', borderRadius: '3px' }} name="description" minRows={5} />
                                 </Grid>
                             </Grid>
 
-
-
+                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Review </Button></Box>
                         </FormSection>
                     </ADForm>
                 </FormContainer>
 
             </BNPRightSideModal>
             <GlobalImageSelector
-                open={profileOpen}
-                onClose={() => setProfileOpen(false)}
-                setSelectedImage={setImage}
-                mode="single"
-                selectedImage={image}
+                open={imageOpen}
+                onClose={() => setImageOpen(false)}
+                setSelectedImage={setImages}
+                mode="multiple"
+                selectedImage={images}
             />
 
         </>
     );
 };
 
-export default CreateBannerModal;
+export default CreateReviewModal;

@@ -4,67 +4,62 @@ import { tagTypes } from "@/redux/api/tag-types";
 
 const galleryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
     getAllImages: builder.query({
-      query: () => ({
-        url: "/gallery/all",
-        method: "GET",
-      }),
+      query: (args) => {
+        const params = new URLSearchParams();
+
+        if (args) {
+          args.forEach((item: TQueryParam) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+
+        return {
+          url: "/gallery/all",
+          method: "GET",
+          params: params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<[]>) => {
+        return {
+          data: response.data,
+          meta: response.meta,
+        };
+      },
+      providesTags: [tagTypes.gallery],
     }),
-    // getAllImages: builder.query({
-    //   query: (args) => {
-    //     const params = new URLSearchParams();
-
-    //     if (args) {
-    //       args.forEach((item: TQueryParam) => {
-    //         params.append(item.name, item.value as string);
-    //       });
-    //     }
-
-    //     return {
-    //       url: "/gallery/all",
-    //       method: "GET",
-    //       params: params,
-    //     };
-    //   },
-    //   transformResponse: (response: TResponseRedux<[]>) => {
-    //     return {
-    //       data: response.data,
-    //       meta: response.meta,
-    //     };
-    //   },
-    //   providesTags: [tagTypes.gallery],
-    // }),
-    getFolders: builder.query({
-      query: () => ({
-        url: "/gallery/folders",
-        method: "GET",
-      }),
-    }),
-
     // getFolders: builder.query({
-    //   query: (args) => {
-    //     const params = new URLSearchParams();
-
-    //     if (args) {
-    //       args.forEach((item: TQueryParam) => {
-    //         params.append(item.name, item.value as string);
-    //       });
-    //     }
-
-    //     return {
-    //       url: "/gallery/folders",
-    //       method: "GET",
-    //       params: params,
-    //     };
-    //   },
-    //   transformResponse: (response: TResponseRedux<[]>) => {
-    //     return {
-    //       data: response.data,
-    //       meta: response.data,
-    //     };
-    //   },
-    //   providesTags: [tagTypes.folder],
+    //   query: () => ({
+    //     url: "/gallery/folders",
+    //     method: "GET",
+    //   }),
     // }),
+
+    getFolders: builder.query({
+      query: (args) => {
+        const params = new URLSearchParams();
+
+        if (args) {
+          args.forEach((item: TQueryParam) => {
+            params.append(item.name, item.value as string);
+          });
+        }
+
+        return {
+          url: "/gallery/folders",
+          method: "GET",
+          params: params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<[]>) => {
+        return {
+          data: response.data,
+          meta: response.data,
+        };
+      },
+      providesTags: [tagTypes.folder],
+    }),
 
     getImagesByFolder: builder.query({
       query: (args) => {

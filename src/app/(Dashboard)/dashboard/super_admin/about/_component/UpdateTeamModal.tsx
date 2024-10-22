@@ -44,7 +44,7 @@ const UpdateTeamModal = ({ open, setOpen, id }: TProps) => {
     const { data, isLoading } = useGetSingleTeamQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.img_bangla = images;
+        data.images = images;
 
 
         try {

@@ -1,0 +1,32 @@
+name: Node.js CD
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /var/www/html/anaa-developers/admin
+            git pull origin main
+            cp .env.example .env
+            npm install --legacy-peer-deps
+            npm run build
+
+            # Check if PM2 process exists, if so, restart it, otherwise start a new one
+            if pm2 describe anaa-developers-admin > /dev/null; then
+              pm2 restart anaa-developers-admin
+            else
+              pm2 start npm --name "anaa-developers-admin" -- run start
+            fi
+
+            # Save PM2 process list
+            pm2 save

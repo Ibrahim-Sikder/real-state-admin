@@ -16,17 +16,16 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/html/anaa-developers/admin
-            git pull origin main
+            git fetch --all
+            git reset --hard origin/main
             cp .env.example .env
             npm install --legacy-peer-deps
             npm run build
 
-            # Check if PM2 process exists, if so, restart it, otherwise start a new one
+            # Restart PM2 process
             if pm2 describe anaa-developers-admin > /dev/null; then
               pm2 restart anaa-developers-admin
             else
               pm2 start npm --name "anaa-developers-admin" -- run start
             fi
-
-            # Save PM2 process list
             pm2 save

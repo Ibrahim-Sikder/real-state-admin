@@ -58,15 +58,15 @@ const UploadImageDialog = ({ folders }: Props) => {
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    reset(); // Reset the form after close
+    reset(); 
   };
 
-  // Function to handle form submission
+
   const onSubmit = async (data: any) => {
     const toastId = toast.loading('Uploading images...');
     const formData = new FormData();
 
-    // Append images to FormData
+
     if (Array.isArray(data.images) && data.images.length > 0) {
       data.images.forEach((file: File) => {
         formData.append('images', file);
@@ -76,12 +76,12 @@ const UploadImageDialog = ({ folders }: Props) => {
       return;
     }
 
-    // Append folder ID to FormData
+ 
     formData.append('folder', data.folder);
 
     try {
-      // Make the API request to upload images
-      const res = await axios.post('http://localhost:5000/api/v1/gallery/upload', formData, {
+     
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/gallery/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -91,7 +91,7 @@ const UploadImageDialog = ({ folders }: Props) => {
       toast.success(res.data.message || 'Images uploaded successfully!', {
         id: toastId,
       });
-      handleClose(); // Close the dialog after successful upload
+      handleClose(); 
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || error.message || 'An error occurred',

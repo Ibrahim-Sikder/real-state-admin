@@ -32,8 +32,9 @@ export type TAppointment = {
   email: string;
   phone: string;
   date: string;
-  category: string;
+  category: string; 
   status: string;
+  createdAt:string,
 };
 
 type TStatusForm = {
@@ -173,7 +174,7 @@ const AppointmentPage = () => {
                           <TableCell align="center">{data.category}</TableCell>
                           
                           <TableCell align="center">
-                            {formatDate(data.date)}
+                            {formatDate(data.createdAt)}
                           </TableCell>
                           <TableCell align="center">{data.status}</TableCell>
                           <TableCell align="center">

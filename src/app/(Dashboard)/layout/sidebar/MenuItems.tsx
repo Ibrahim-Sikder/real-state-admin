@@ -2,7 +2,7 @@
 
 import { USER_ROLE } from "@/constant/role";
 import { DrawerItem, userRole } from "@/types/common";
-import { AccountBalance, AccountTreeTwoTone, BookOnline, ContactMail, Diversity1, Diversity2, Roofing, } from "@mui/icons-material";
+import { AccountBalance, AccountTreeTwoTone, AdsClick, BookOnline, Collections, ContactMail, Diversity1, Diversity2, LiveHelp, Reviews, Roofing, } from "@mui/icons-material";
 import {
   IconAperture,
   IconUsersGroup,
@@ -43,12 +43,12 @@ const drawerItems = (role: userRole): DrawerItem[] => {
         {
           title: "Reivew",
           path: `/dashboard/${role}/review`,
-          icon: ContactMail,
+          icon: Reviews,
         },
         {
           title: "Affiliation",
           path: `/dashboard/${role}/affiliation`,
-          icon: ContactMail,
+          icon: AdsClick,
         },
         {
           title: "Contact ",
@@ -58,12 +58,12 @@ const drawerItems = (role: userRole): DrawerItem[] => {
         {
           title: "FAQ",
           path: `/dashboard/${role}/faq`,
-          icon: ContactMail,
+          icon: LiveHelp,
         },
         {
           title: "Photo Gallery",
           path: `/dashboard/${role}/image-gallery`,
-          icon: ContactMail,
+          icon: Collections,
         },
         {
           title: " Gallery",

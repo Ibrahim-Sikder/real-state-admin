@@ -15,7 +15,7 @@ import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, category, high_budget, loan_partner, lookingFor, low_budget, nearby_location, tags } from "@/constant";
 import ADSelect from "@/components/Forms/Select";
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -42,7 +42,6 @@ const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual 
 
 const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const { data, isLoading } = useGetSingleProjectQuery(id);
-    console.log(data)
     const [updateProject] = useUpdateProjectMutation();
     const [overviewImages, setOverviewImages] = useState<string[]>([]);
     const [conceptImages, setConceptImages] = useState<string[]>([]);
@@ -97,6 +96,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         data.floorImages = floorImages;
         data.conceptImages = conceptImages;
         data.overviewImages = overviewImages;
+        data.high_budget= Number(data.high_budget),
+        data.low_budget= Number(data.low_budget)
 
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
@@ -149,13 +150,13 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
         try {
             const res = await updateProject({ ...data, id }).unwrap();
+            console.log(res)
 
-            toast.success(res.message);
+            toast.success(res?.message);
 
             setOpen(false);
         } catch (err: any) {
-            console.error('Error:', err);
-            toast.error(err.message);
+            toast.error(err?.message || "Project create failed!");
         }
     };
 
@@ -475,10 +476,10 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="hight_budget" label="High Budget" />
+                                                <ADSelect items={low_budget} fullWidth name="low_budget" label="Low Budget" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="low_budget" label="Low Budget" />
+                                                <ADSelect items={high_budget} fullWidth name="high_budget" label="High Budget" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight="semibold" marginBottom="10px">

@@ -16,18 +16,12 @@ export const tags = [
   { title: "Landscape Design" },
   { title: "Complete project" },
 ];
-export const category = ['On going project','On going project','Complete project'];
-// export const category = [
-//   { title: "On going project" },
-//   { title: "Upcoming project" },
-//   { title: "Complete project" },
-// // ];
-// export const lookingFor = [
-//   { title: "Commercial" },
-//   { title: "Residential" },
-// ];
-export const lookingFor = ['Commercial','Residential'];
+export const lookingFor = ['Commercial','Residential']
+export const location = ['All Cities','Dhaka','Uttara','Gulshan','Badda','Mirpur']
 
+export const category = ['On Going Project','Upcoming Project','Complete Project']
+export const low_budget = ['30000','40000','50000','100000']
+export const high_budget = ['200000','300000','400000','500000']
 export const apertmentContains = [
   { title: "3 Beds" },
   { title: "3 Baths" },

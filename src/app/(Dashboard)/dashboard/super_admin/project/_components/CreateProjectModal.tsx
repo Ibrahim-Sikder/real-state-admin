@@ -385,6 +385,9 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         <ADInput fullWidth name="low_budget" label="Low Budget" />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="brochure_link" label="Brow Share Link" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
                                             Buy an Apartment on Easy Installments
                                         </Typography>

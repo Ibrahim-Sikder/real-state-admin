@@ -96,8 +96,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         data.floorImages = floorImages;
         data.conceptImages = conceptImages;
         data.overviewImages = overviewImages;
-        data.high_budget= Number(data.high_budget),
-        data.low_budget= Number(data.low_budget)
+        data.high_budget = Number(data.high_budget),
+            data.low_budget = Number(data.low_budget)
 
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
@@ -208,6 +208,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         meta_keywords: singleData?.meta_keywords || "",
         high_budget: singleData?.hight_budget || "",
         low_budget: singleData?.low_budget || "",
+        brochure_link: singleData?.brochure_link || "",
         category: singleData?.category || '',
         looking_for: singleData?.looking_for || '',
         apartment_contains: singleData?.apartment_contains || [],
@@ -480,6 +481,9 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADSelect items={high_budget} fullWidth name="high_budget" label="High Budget" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="brochure_link" label="Brow Share Link" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight="semibold" marginBottom="10px">

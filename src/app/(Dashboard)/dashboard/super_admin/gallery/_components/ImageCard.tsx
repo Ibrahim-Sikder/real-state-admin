@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Box,
@@ -14,6 +15,9 @@ import {
 import { Delete } from "@mui/icons-material";
 import Image from "next/image";
 import { IconFileTypeCsv } from "@tabler/icons-react";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ImageCardProps {
   image: any;
@@ -22,15 +26,16 @@ interface ImageCardProps {
   deleteImage: ({ public_id, id }: { public_id: string; id: string }) => void;
 }
 
+
 const ImageCard = ({
   image,
   fileType,
   fileIcons,
-  deleteImage,
+
 }: ImageCardProps) => {
   const [open, setOpen] = useState(false);
-
-  const isImageFile = ["jpg", "jpeg", "png", "gif", "webp"].includes(fileType);
+  const router = useRouter()
+  const isImageFile = ["jpg", "jpeg", "png",].includes(fileType);
 
   const handleDeleteClick = () => {
     setOpen(true);
@@ -40,11 +45,28 @@ const ImageCard = ({
     setOpen(false);
   };
 
-  const handleConfirmDelete = () => {
-    deleteImage({ public_id: image.public_id, id: image._id });
-    setOpen(false);
-  };
 
+  const handleConfirmDelete = async () => {
+
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/gallery/delete`, {
+        id: image._id,
+        public_id: image.public_id,
+      });
+
+      if (res.data.success) {
+        toast.success("Image deleted successfully!");
+        setOpen(false);
+
+        window.location.reload()
+      } else {
+        toast.error("Failed to delete the image.");
+      }
+    } catch (err) {
+      console.error("Error deleting image:", err);
+      toast.error("An error occurred while deleting the image.");
+    }
+  };
   return (
     <>
       <Grid item xs={6} sm={4} md={3} lg={2}>

@@ -264,6 +264,9 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                 </Box>
                                             </Grid>
                                             <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="title" label="Title" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>

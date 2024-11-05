@@ -163,6 +163,9 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="title" label="Title" />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
@@ -384,9 +387,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="low_budget" label="Low Budget" />
                                     </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="brochure_link" label="Brow Share Link" />
-                                    </Grid>
+                                   
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
                                             Buy an Apartment on Easy Installments

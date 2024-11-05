@@ -3,6 +3,7 @@ import { useMediaQuery, Box, Drawer, Typography } from "@mui/material";
 import { Sidebar, Logo } from "react-mui-sidebar";
 import SideBarItems from "./SidebarItems";
 import drawerItems from "./MenuItems";
+import Link from "next/link";
 
 interface MSidebarProps {
   isMobileSidebarOpen: boolean;
@@ -56,15 +57,19 @@ const MSidebar = ({
               themeSecondaryColor="#fff"
               showProfile={false}
             >
-              <Typography
-                textAlign="center"
-                fontWeight="bold"
-                variant="h5"
-                marginTop="10px"
-                color='white'
-              >
-               Anaa Developers
-              </Typography>
+              <Link href='/dashboard' style={{textDecoration:'none'}}>
+                <Typography
+                  textAlign="center"
+                  fontWeight="bold"
+                  variant="h5"
+                  marginTop="10px"
+                  color='white'
+
+
+                >
+                  Anaa Developer
+                </Typography>
+              </Link>
               <Box sx={{ mt: 2 }}>
                 {drawerItems('super_admin').map((item, index) => (
                   <SideBarItems key={index} item={item} index={index} />

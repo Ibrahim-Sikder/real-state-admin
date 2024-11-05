@@ -66,7 +66,7 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           icon: Collections,
         },
         {
-          title: " Gallery",
+          title: " Stock Photo",
           path: `${role}/gallery`,
           icon: IconPhotoPause,
           child: [

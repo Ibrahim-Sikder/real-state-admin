@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import CreateProjectModal from "./_components/CreateProjectModal";
 import UpdateProjectModal from "./_components/UpdateProjectModal";
 import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
+import Head from "next/head";
 export type TOppressed = {
     _id: string,
     title: string;
@@ -127,10 +128,14 @@ const ProjectPage = () => {
         },
     };
     const iconStyle = { fontSize: '20px' }
-    console.log(projectData)
+
 
     return (
         <PageContainer>
+            <Head>
+                <title>Our Projects - Anaa Developers Ltd </title>
+
+            </Head>
             <DashboardCard>
                 <Box>
 
@@ -170,7 +175,7 @@ const ProjectPage = () => {
                                             <TableCell align="center">{data.title} </TableCell>
 
                                             <TableCell align="center">{data.sub_title}</TableCell>
-                                            <TableCell align="center">{data.short_description.slice(0,50)}</TableCell>
+                                            <TableCell align="center">{data.short_description.slice(0, 50)}</TableCell>
 
                                             <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
                                             <TableCell align="center">

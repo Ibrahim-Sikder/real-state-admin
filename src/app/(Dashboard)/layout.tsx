@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Header from "./layout/header/Header";
 import Sidebar from "./layout/sidebar/Sidebar";
 import { theme } from "@/lib/Theme/Theme";
+import Head from "next/head";
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -33,6 +34,14 @@ export default function RootLayout({
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   return (
     <MainWrapper className="mainwrapper">
+      <Head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Your app description here" />
+        <meta name="robots" content="index, follow" />
+        <link rel="icon" href="/favicon.ico" />
+        <title>Anaa Developers Ltd </title>
+      </Head>
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}

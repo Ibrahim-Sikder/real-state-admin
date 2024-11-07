@@ -7,7 +7,7 @@ const Icons = () => {
     <PageContainer title="Icons" description="this is Icons">
       <DashboardCard title="Icons">
         <iframe
-          src="https://tabler-icons.io/"
+          src="/public/favicon.ico"
           title="Inline Frame Example"
           frameBorder={0}
           width="100%"

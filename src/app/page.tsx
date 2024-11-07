@@ -1,13 +1,24 @@
 "use client";
 import Link from "next/link";
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
-import Logo from "./(Dashboard)/layout/shared/logo/Logo";
 import AuthLogin from "@/components/auth/AuthLogin";
 import PageContainer from "./(Dashboard)/components/container/PageContainer";
+import Head from "next/head";
 
 const Login2 = () => {
   return (
-    <PageContainer title="Login" description="this is Login page">
+    <PageContainer title="Login | Admin Dashboard">
+      <Head>
+        <title>Login | Admin Dashboard</title>
+        <meta name="description" content="Login to access the admin dashboard. Secure and efficient platform for managing administrative tasks." />
+        <meta name="robots" content="index, follow" />
+        <meta name="keywords" content="admin login, dashboard login, secure login, admin portal" />
+        <meta property="og:title" content="Admin Login" />
+        <meta property="og:description" content="Login to access the admin dashboard. A secure platform for managing administrative tasks." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://admin.anaadevelopersltd.com/" />
+        <meta property="og:image" content="https://admin.anaadevelopersltd.com" />
+      </Head>
       <Box
         sx={{
           position: "relative",

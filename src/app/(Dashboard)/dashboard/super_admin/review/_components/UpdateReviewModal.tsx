@@ -43,7 +43,7 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
     const { data, isLoading } = useGetSinglereviewQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.image = images;
+        data.images = images;
 
 
         try {
@@ -71,7 +71,7 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
 
 
     const defaultValues = {
-        images: singleData?.images || "",
+        images: singleData?.images || [],
         createdAt: singleData?.createdAt,
         name: singleData?.name,
         designation: singleData?.designation,

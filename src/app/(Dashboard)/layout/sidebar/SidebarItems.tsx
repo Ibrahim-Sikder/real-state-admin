@@ -53,13 +53,13 @@ const SideBarItems = ({ index, item }: IProps) => {
         id={`panel${index}-header`}
         sx={{
           backgroundColor: 'transparent',
-          color: 'white',  // Set color to white
+          color: 'white', 
         }}
       >
-        <ListItemIcon sx={{ minWidth: "28px", color: 'white' }}> {/* Icon color set to white */}
+        <ListItemIcon sx={{ minWidth: "28px", color: 'white' }}> 
           {item.icon && <item.icon />}
         </ListItemIcon>
-        <ListItemText primary={item.title} sx={{ ml: 4, color: 'white' }} /> {/* Text color set to white */}
+        <ListItemText primary={item.title} sx={{ ml: 4, color: 'white' }} /> 
       </AccordionSummary>
       <AccordionDetails sx={{ p: 0, m: 0, backgroundColor: 'transparent' }}>
         <List component="div">
@@ -79,7 +79,7 @@ const SideBarItems = ({ index, item }: IProps) => {
                       <ListItemIcon
                         sx={{
                           minWidth: "28px",
-                          color: 'white',  // Set icon color to white
+                          color: 'white',  
                         }}
                       >
                         <subItem.icon size={18} />
@@ -90,7 +90,7 @@ const SideBarItems = ({ index, item }: IProps) => {
                       primaryTypographyProps={{
                         fontSize: "14px",
                         fontWeight: isSubActive ? "bold" : "medium",
-                        color: 'white',  // Set text color to white
+                        color: 'white', 
                       }}
                     />
                   </ListItemButton>

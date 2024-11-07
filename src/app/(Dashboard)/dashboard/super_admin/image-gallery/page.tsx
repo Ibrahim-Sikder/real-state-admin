@@ -22,6 +22,7 @@ import { useDeleteAffiliationMutation, useGetAllAffiliationQuery } from "@/redux
 import CreateGalleryModal from "./_components/CreateGalleryModal";
 import UpdateGalleryModal from "./_components/UpdateGalleryModal";
 import { useGetAllPhotoQuery } from "@/redux/api/photoGalleryApi";
+import { useDeleteImgGalleryMutation, useGetAllImgGalleryQuery } from "@/redux/api/imageGalleryApi";
 export type TTeam = {
     _id: string,
     name: string,
@@ -37,8 +38,8 @@ const AffiliationPage = () => {
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: imageGalleryData, isLoading } = useGetAllPhotoQuery({ page: currentPage, limit: 5 });
-    const [deleteAffiliation] = useDeleteAffiliationMutation();
+    const { data: imageGalleryData, isLoading } = useGetAllImgGalleryQuery({ page: currentPage, limit: 5 });
+    const [deleteImgGallery] = useDeleteImgGalleryMutation();
     const handleOpen = () => setOpen(true);
 
     const hanldeOpenUpdateModal = (id: string) => {
@@ -46,13 +47,13 @@ const AffiliationPage = () => {
         setOpenUpdateModal(true);
     };
 
+
     const handleClose = () => setOpen(false);
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
         return <p>Loading...........</p>;
     }
-    console.log(imageGalleryData)
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -67,11 +68,11 @@ const AffiliationPage = () => {
 
             if (result.isConfirmed) {
                 try {
-                    await deleteAffiliation(id).unwrap();
+                    await deleteImgGallery(id).unwrap();
 
                     Swal.fire({
                         title: "Deleted!",
-                        text: "Your affiliation has been deleted.",
+                        text: "Your gallery has been deleted.",
                         icon: "success"
                     });
                 } catch (err: any) {

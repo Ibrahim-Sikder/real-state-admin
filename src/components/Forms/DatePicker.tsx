@@ -40,7 +40,7 @@ const ADDatePicker = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
               label={label}
-              disablePast={disablePast}
+           
               {...field}
               onChange={(date) => onChange(date ? date.toISOString() : null)} // Ensure value is in ISO string format
               value={dateValue}

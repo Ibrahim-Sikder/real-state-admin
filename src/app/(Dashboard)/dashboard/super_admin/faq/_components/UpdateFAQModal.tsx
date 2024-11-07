@@ -35,7 +35,7 @@ const UpdateFAQModal = ({ open, setOpen, id }: TProps) => {
 
     const [updateFAQ] = useUpdateFaqMutation()
     const { data, isLoading } = useGetSingleFaqQuery(id)
-    console.log(data)
+
 
     const handleSubmit = async (data: FieldValues) => {
 
@@ -61,7 +61,7 @@ const UpdateFAQModal = ({ open, setOpen, id }: TProps) => {
     const defaultValues = {
         question: singleData?.question || "",
         answer: singleData?.answer || "",
-        createdAt: singleData?.createdAt || "",
+        date: singleData?.date || "",
 
     };
 
@@ -95,7 +95,7 @@ const UpdateFAQModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid item md={12} sm={12}>
                                             <ADDatePicker
                                                 fullWidth
-                                                name="createdAt"
+                                                name="date"
                                                 label="Post Date"
 
                                             />

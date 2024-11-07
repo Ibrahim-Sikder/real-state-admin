@@ -151,7 +151,7 @@ const FAQPage = () => {
 
 
                         <TableCell align="center">
-                            {formatDate(data.createdAt)}
+                            {formatDate(data.date)}
 
 
                         </TableCell>

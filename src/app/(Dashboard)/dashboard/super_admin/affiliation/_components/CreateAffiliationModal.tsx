@@ -90,7 +90,7 @@ const CreateAffiliationModal = ({ open, setOpen }: TProps) => {
                                 <Grid item md={12} sm={12}>
                                     <ADDatePicker
                                         fullWidth
-                                        name="createdAt"
+                                        name="date"
                                         label="Date"
                                     />
                                 </Grid>

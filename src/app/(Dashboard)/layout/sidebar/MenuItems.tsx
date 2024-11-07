@@ -71,11 +71,11 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           icon: IconPhotoPause,
           child: [
             {
-              title: "List Photos",
+              title: "All Photos",
               path: `${role}/gallery/photos`,
             },
             {
-              title: "List Folders",
+              title: "All Folders",
               path: `${role}/gallery/folders`,
             },
           ],

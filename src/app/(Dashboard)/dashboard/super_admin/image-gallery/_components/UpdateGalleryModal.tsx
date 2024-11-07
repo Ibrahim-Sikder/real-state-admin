@@ -2,7 +2,7 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import { Box, Button, Grid, styled,  } from "@mui/material";
+import { Box, Button, Grid, styled, } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
@@ -11,6 +11,7 @@ import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useGetSinglePhotoQuery, useUpdatePhotoMutation } from "@/redux/api/photoGalleryApi";
+import { useGetSingleImgGalleryQuery, useUpdateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -38,15 +39,15 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
     const [imageOpen, setImageOpen] = useState(false);
 
 
-    const [updatePhoto] = useUpdatePhotoMutation()
-    const { data, isLoading } = useGetSinglePhotoQuery(id)
+    const [updateImgGallery] = useUpdateImgGalleryMutation()
+    const { data, isLoading } = useGetSingleImgGalleryQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
         data.image = images;
 
 
         try {
-            const res = await updatePhoto({ ...data, id }).unwrap();
+            const res = await updateImgGallery({ ...data, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -99,14 +100,14 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
                                             </Box>
                                         </Grid>
                                         <Grid item md={12} sm={12}>
-                                    <ADInput
-                                        fullWidth
-                                        name="title"
-                                        label="Title"
-                                        placeholder="Title"
+                                            <ADInput
+                                                fullWidth
+                                                name="title"
+                                                label="Title"
+                                                placeholder="Title"
 
-                                    />
-                                </Grid>
+                                            />
+                                        </Grid>
 
                                         <Grid item md={12} sm={12}>
                                             <ADDatePicker
@@ -118,7 +119,7 @@ const UpdateGalleryModal = ({ open, setOpen, id }: TProps) => {
 
                                     </Grid>
 
-                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
+                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Update Photo Gallery </Button></Box>
                                 </FormSection>
                             </ADForm>
                         </FormContainer>

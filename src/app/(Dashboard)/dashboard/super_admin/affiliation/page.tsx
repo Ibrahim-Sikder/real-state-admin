@@ -52,7 +52,6 @@ const AffiliationPage = () => {
     if (isLoading) {
         return <p>Loading...........</p>;
     }
-    console.log(affiliationData)
 
     const handleDelete = async (id: string) => {
         Swal.fire({
@@ -157,7 +156,7 @@ const AffiliationPage = () => {
                                             </TableCell>
 
                                             <TableCell align="center">
-                                                {formatDate(data.createdAt)}
+                                                {formatDate(data.date)}
 
 
                                             </TableCell>

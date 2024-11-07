@@ -162,7 +162,7 @@ const ProjectPage = () => {
                                             <TableCell align="center">{data.name} </TableCell>
                                             <TableCell align="center">{data.designation} </TableCell>
                                             <TableCell align="center">{data.title} </TableCell>
-                                            <TableCell align="center">{data.description.slice(0, 50)} </TableCell>
+                                            <TableCell align="center">{data.description.slice(0, 30)}... </TableCell>
 
                                             <TableCell align="center">
                                                 {formatDate(data.createdAt)}

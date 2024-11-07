@@ -2,18 +2,14 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import ADEditor from "@/components/Forms/JodiEditor";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
+import { Box, Button, Grid, styled, } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
-import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import { useCreateAffiliationMutation } from "@/redux/api/affiliationApi";
 import { useCreatePhotoMutation } from "@/redux/api/photoGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -106,7 +102,7 @@ const CreateGalleryModal = ({ open, setOpen }: TProps) => {
 
                             </Grid>
 
-                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
+                            <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Photo Gallery </Button></Box>
                         </FormSection>
                     </ADForm>
                 </FormContainer>

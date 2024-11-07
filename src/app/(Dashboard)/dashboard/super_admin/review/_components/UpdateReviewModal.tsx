@@ -2,7 +2,6 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import ADEditor from "@/components/Forms/JodiEditor";
 import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -12,8 +11,7 @@ import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
-import { useGetSingleTeamQuery, useUpdateTeamMutation } from "@/redux/api/teamApi";
-import { useGetSingleAffiliationQuery, useUpdateAffiliationMutation } from "@/redux/api/affiliationApi";
+import { useGetSinglereviewQuery, useUpdatereviewMutation } from "@/redux/api/reviewApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -41,15 +39,15 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
     const [imageOpen, setImageOpen] = useState(false);
 
 
-    const [updateAffiliation] = useUpdateAffiliationMutation()
-    const { data, isLoading } = useGetSingleAffiliationQuery(id)
+    const [updatereview] = useUpdatereviewMutation()
+    const { data, isLoading } = useGetSinglereviewQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
         data.image = images;
 
 
         try {
-            const res = await updateAffiliation({ ...data, id }).unwrap();
+            const res = await updatereview({ ...data, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -71,9 +69,14 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
         return <p>Loading............</p>
     }
 
+
     const defaultValues = {
         images: singleData?.images || "",
-        createdAt: singleData?.createdAt
+        createdAt: singleData?.createdAt,
+        name: singleData?.name,
+        designation: singleData?.designation,
+        description: singleData?.description,
+        title: singleData?.title,
 
     };
 
@@ -83,7 +86,7 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
                 isLoading ? (
                     <p>Loading........</p>
                 ) : (
-                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Team">
+                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Review">
                         <FormContainer>
                             <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
                                 <FormSection>
@@ -98,21 +101,50 @@ const UpdateReviewModal = ({ open, setOpen, id }: TProps) => {
                                                     onClick={() => setImageOpen(true)}
                                                 />
 
+
                                             </Box>
                                         </Grid>
 
 
                                         <Grid item md={12} sm={12}>
-                                            <ADDatePicker
+                                            <ADInput
                                                 fullWidth
-                                                name="createdAt"
-                                                label="Date"
+                                                name="name"
+                                                label="Name"
+                                                autoFocus={true}
+                                            />
+                                        </Grid>
+                                        <Grid item md={12} sm={12}>
+                                            <ADInput
+                                                fullWidth
+                                                name="designation"
+                                                label="Designation"
+                                                autoFocus={true}
+                                            />
+                                        </Grid>
+                                        <Grid item md={12} sm={12}>
+                                            <ADInput
+                                                fullWidth
+                                                name="title"
+                                                label="Title"
+                                                autoFocus={true}
                                             />
                                         </Grid>
 
-                                    </Grid>
+                                        <Grid item md={12} sm={12}>
+                                            <ADDatePicker
+                                                fullWidth
+                                                name="createdAt"
+                                                label="Post Date"
 
-                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Affiliation </Button></Box>
+                                            />
+                                        </Grid>
+                                        <Grid item md={12} sm={12}>
+                                            <Typography variant="h5" fontWeight='semibold'>Description</Typography>
+                                            <ADTextArea sx={{ border: '1px solid black', borderRadius: '3px' }} name="description" minRows={5} />
+                                        </Grid>
+                                    </Grid>
+                                    <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Update Reivew </Button></Box>
                                 </FormSection>
                             </ADForm>
                         </FormContainer>

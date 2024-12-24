@@ -142,12 +142,20 @@ const ProjectPage = () => {
                     <Box display='flex' justifyContent='space-between'>
                         <Typography variant="h5" fontWeight='bold'>Our Project </Typography>
 
-                        <Button
-                            onClick={handleOpen}
-                            startIcon={<AddCircleOutlineIcon />}>
-                            Create Project
-                        </Button>
+                        <div className="flex items-center gap-2 ">
+                            <Button
+                                sx={{ marginRight: '3px' }}
+                                onClick={handleOpen}
+                                startIcon={<AddCircleOutlineIcon />}>
+                                Create Project
+                            </Button>
+                            <Button
+                                onClick={handleOpen}
+                                startIcon={<AddCircleOutlineIcon />}>
+                                Create Category
+                            </Button>
 
+                        </div>
                     </Box>
                     <Box bgcolor="white" padding={3}>
                         <TableContainer component={Paper}>

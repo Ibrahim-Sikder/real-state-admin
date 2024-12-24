@@ -132,6 +132,7 @@ const PhotosPage = () => {
                 ))}
               </Grid>
 
+
               <Pagination
                 count={metaData?.totalPages || 1}
                 page={metaData?.page || 1}

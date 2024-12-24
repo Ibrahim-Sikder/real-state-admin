@@ -23,6 +23,16 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           title: "Project",
           path: `/dashboard/${role}/project`,
           icon: AccountTreeTwoTone,
+          child: [
+            {
+              title: "Project",
+              path: `${role}/project`,
+            },
+            {
+              title: "Project Category",
+              path: `${role}/project/category`,
+            },
+          ],
         },
         {
           title: "Services",

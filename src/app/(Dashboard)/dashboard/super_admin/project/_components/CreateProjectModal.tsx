@@ -3,7 +3,7 @@
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
 import ADEditor from "@/components/Forms/JodiEditor";
-import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack, FormControlLabel, Checkbox } from "@mui/material";
+import { Box, Button, Grid, styled, Typography, Stepper, Step, StepLabel, Stack } from "@mui/material";
 import React, { ChangeEvent, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
@@ -16,6 +16,7 @@ import { useCreateProjectMutation } from "@/redux/api/projectApi";
 import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
 import ADCheckbox from "@/components/Forms/checkbox";
 import ADSelect from "@/components/Forms/Select";
+import ADDatePicker from "@/components/Forms/DatePicker";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -76,16 +77,15 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
     };
 
 
-
     const handleRemoveVideoUrl = () => {
         const newVideoUrls = [...videoUrls];
 
         if (newVideoUrls.length > 1) {
             newVideoUrls.pop();
             setVideoUrls(newVideoUrls);
-            setVideoUrls(videoUrls);
         }
     };
+
 
 
     const handleSubmit = async (values: FieldValues) => {
@@ -138,7 +138,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                     </Stepper>
 
                     <ADForm onSubmit={async (values) => {
-     
+
                         if (isLastStep) {
                             await handleSubmit(values);
                         } else {
@@ -173,6 +173,12 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="project_type" label="Project Type " />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="project_offer" label="Project Offer" />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADDatePicker fullWidth name="project_date" label="Project Date " />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="project_address" label="Project Address" />
@@ -387,7 +393,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="low_budget" label="Low Budget" />
                                     </Grid>
-                                   
+
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
                                             Buy an Apartment on Easy Installments

@@ -12,11 +12,10 @@ import { toast } from "sonner";
 import ADAutoComplete from "@/components/Forms/AutoComplete";
 import { useGetSingleProjectQuery, useUpdateProjectMutation } from "@/redux/api/projectApi";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-
 import ADImageUpload from "@/components/Forms/FileUpload";
-import { useCreateProjectMutation } from "@/redux/api/projectApi";
 import { additionalFeatures, amenities, apertmentContains, category, high_budget, loan_partner, lookingFor, low_budget, nearby_location, tags } from "@/constant";
 import ADSelect from "@/components/Forms/Select";
+import ADDatePicker from "@/components/Forms/DatePicker";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -63,14 +62,19 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
+    const singleData = data?.data;
+
     const [videoUrls, setVideoUrls] = useState<string[]>(['']);
 
-
+    useEffect(() => {
+        if (singleData?.videoUrls?.length) {
+            setVideoUrls(singleData.videoUrls);
+        }
+    }, [singleData]);
 
     const handleAddVideoUrl = () => {
         setVideoUrls([...videoUrls, '']);
     };
-
 
     const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
         const newVideoUrls = [...videoUrls];
@@ -78,20 +82,15 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         setVideoUrls(newVideoUrls);
     };
 
-
-
     const handleRemoveVideoUrl = () => {
-        const newVideoUrls = [...videoUrls];
-
-
-        if (newVideoUrls.length > 1) {
-            newVideoUrls.pop();
+        if (videoUrls.length > 1) {
+            const newVideoUrls = videoUrls.slice(0, -1);
             setVideoUrls(newVideoUrls);
-            setVideoUrls(videoUrls);
         }
     };
 
     const handleSubmit = async (data: FieldValues) => {
+
 
         data.floorImages = floorImages;
         data.conceptImages = conceptImages;
@@ -109,6 +108,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                 (key: any) => (typeof key === 'object' ? key.videoUrls : key)
             );
         }
+
+
         if (Array.isArray(data.map_Location)) {
             data.map_Location = data.map_Location.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.map_Location : key)
@@ -146,11 +147,16 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                 (key: any) => (typeof key === 'object' ? key.home_loan_partner : key)
             );
         }
+        const modifyData = {
+            videoUrls,
+            ...data
 
-
+        }
+        if (Array.isArray(videoUrls)) {
+            modifyData.videoUrls = videoUrls.filter((url) => url !== '');
+        }
         try {
-            const res = await updateProject({ ...data, id }).unwrap();
-            console.log(res)
+            const res = await updateProject({ ...modifyData, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -160,7 +166,6 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         }
     };
 
-    const singleData = data?.data;
 
     useEffect(() => {
 
@@ -181,6 +186,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         title: singleData?.title || '',
         sub_title: singleData?.sub_title || '',
         project_type: singleData?.project_type || '',
+        project_date: singleData?.project_date || '',
+        project_offer: singleData?.project_offer || '',
         project_address: singleData?.project_address || '',
         land_area: singleData?.land_area || '',
         storied: singleData?.storied || '',
@@ -274,6 +281,12 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="project_type" label="Project Type " />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="project_offer" label="Project Offer" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADDatePicker fullWidth name="project_date" label="Project Date " />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="project_address" label="Project Address" />
@@ -436,12 +449,12 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                     <FormSection>
                                         <Grid container spacing={2}>
                                             <Grid item md={12} sm={12}>
-
-                                                {singleData?.videoUrls?.map((url: any, index: number) => (
+                                                {videoUrls.map((url, index) => (
                                                     <ADInput
                                                         key={index}
                                                         name={`videoUrls.${index}`}
-                                                        label="Video URL"
+                                                        label={`Video URL ${index + 1}`}
+                                                        value={url}
                                                         onChange={(event) => handleInputChange(index, event)}
                                                         fullWidth
                                                     />

@@ -21,6 +21,7 @@ import CreateTeamModal from "./_component/CreateTeamModal";
 import UpdateTeamModal from "./_component/UpdateTeamModal";
 import { useDeleteTeamMutation, useGetAllTeamQuery } from "@/redux/api/teamApi";
 import Image from "next/image";
+import Loader from "@/app/loading";
 export type TTeam = {
     _id: string,
     name: string,
@@ -49,7 +50,7 @@ const ProjectPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
     console.log(teamData)
 

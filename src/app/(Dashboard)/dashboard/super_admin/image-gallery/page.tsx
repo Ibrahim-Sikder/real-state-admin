@@ -23,6 +23,7 @@ import CreateGalleryModal from "./_components/CreateGalleryModal";
 import UpdateGalleryModal from "./_components/UpdateGalleryModal";
 import { useGetAllPhotoQuery } from "@/redux/api/photoGalleryApi";
 import { useDeleteImgGalleryMutation, useGetAllImgGalleryQuery } from "@/redux/api/imageGalleryApi";
+import Loader from "@/app/loading";
 export type TTeam = {
     _id: string,
     name: string,
@@ -52,7 +53,7 @@ const AffiliationPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
 
     const handleDelete = async (id: string) => {

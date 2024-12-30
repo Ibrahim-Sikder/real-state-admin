@@ -93,7 +93,7 @@ const UpdateServiceModal = ({ open, setOpen, id }: TProps) => {
                 isLoading ? (
                     <p>Loading........</p>
                 ) : (
-                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Project">
+                    <BNPRightSideModal open={open} setOpen={setOpen} title="Update Services">
                         <FormContainer>
                             <ADForm onSubmit={handleSubmit} defaultValues={defaultValues}>
                                 <FormSection>

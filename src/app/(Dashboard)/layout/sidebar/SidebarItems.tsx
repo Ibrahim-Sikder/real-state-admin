@@ -15,6 +15,8 @@ import { styled } from "@mui/material/styles";
 type IProps = {
   item: DrawerItem;
   index: number;
+  openAccordion: number | null;
+  onAccordionChange: (index: number) => void;
 };
 
 const ListItemStyled = styled(ListItem, {
@@ -34,11 +36,14 @@ const ListItemStyled = styled(ListItem, {
   },
 }));
 
-const SideBarItems = ({ index, item }: IProps) => {
+
+const SideBarItems = ({index, item, openAccordion, onAccordionChange }: IProps) => {
   const linkPath = `${item.path}`;
   const pathName = usePathname();
   const isActive = pathName === linkPath;
-
+  const handleAccordionChange = () => {
+    onAccordionChange(openAccordion === index ? -1 : index);
+  };
   return item.child ? (
     <Accordion
       key={index}
@@ -46,6 +51,8 @@ const SideBarItems = ({ index, item }: IProps) => {
         boxShadow: 'none',
         backgroundColor: 'transparent',
       }}
+      expanded={openAccordion === index}
+      onChange={handleAccordionChange}
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}

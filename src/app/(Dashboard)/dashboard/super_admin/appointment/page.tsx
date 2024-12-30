@@ -25,6 +25,7 @@ import {
 import ADForm from "@/components/Forms/Form";
 import ADSelect from "@/components/Forms/Select";
 import { useForm } from "react-hook-form";
+import Loader from "@/app/loading";
 
 export type TAppointment = {
   _id: string;
@@ -54,7 +55,7 @@ const AppointmentPage = () => {
   const [updateAppointment] = useUpdateAppointmentMutation();
 
   if (isLoading) {
-    return <p>Loading...........</p>;
+    return <Loader/>;
   }
 
   const handleDelete = async (id: string) => {

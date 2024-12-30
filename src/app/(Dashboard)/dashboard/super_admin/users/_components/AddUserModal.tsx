@@ -2,7 +2,7 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
+import ANDModal from "@/components/Shared/Modal/ANAModal";
 import {
   Box,
   Button,

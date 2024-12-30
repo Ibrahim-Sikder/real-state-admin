@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMediaQuery, Box, Drawer, Typography } from "@mui/material";
 import { Sidebar, Logo } from "react-mui-sidebar";
 import SideBarItems from "./SidebarItems";
@@ -28,6 +28,13 @@ const MSidebar = ({
     },
   };
 
+
+
+  const [openAccordion, setOpenAccordion] = useState<number | null>(null);
+
+  const handleAccordionChange = (index: any) => {
+    setOpenAccordion(openAccordion === index ? null : index);
+  };
   if (lgUp) {
     return (
       <Box sx={{ width: sidebarWidth, flexShrink: 0 }}>
@@ -57,7 +64,7 @@ const MSidebar = ({
               themeSecondaryColor="#fff"
               showProfile={false}
             >
-              <Link href='/dashboard' style={{textDecoration:'none'}}>
+              <Link href='/dashboard' style={{ textDecoration: 'none' }}>
                 <Typography
                   textAlign="center"
                   fontWeight="bold"
@@ -72,7 +79,8 @@ const MSidebar = ({
               </Link>
               <Box sx={{ mt: 2 }}>
                 {drawerItems('super_admin').map((item, index) => (
-                  <SideBarItems key={index} item={item} index={index} />
+                  <SideBarItems openAccordion={openAccordion}
+                    onAccordionChange={handleAccordionChange} key={index} item={item} index={index} />
                 ))}
               </Box>
             </Sidebar>
@@ -111,7 +119,7 @@ const MSidebar = ({
         >
           <Logo img="/images/logos/dark-logo.svg" />
           {drawerItems('super_admin').map((item, index) => (
-            <SideBarItems key={index} item={item} index={index} />
+            <SideBarItems openAccordion={openAccordion} onAccordionChange={handleAccordionChange} key={index} item={item} index={index} />
           ))}
         </Sidebar>
       </Box>

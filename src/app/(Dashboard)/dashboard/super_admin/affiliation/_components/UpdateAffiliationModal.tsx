@@ -14,6 +14,7 @@ import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import { useGetSingleTeamQuery, useUpdateTeamMutation } from "@/redux/api/teamApi";
 import { useGetSingleAffiliationQuery, useUpdateAffiliationMutation } from "@/redux/api/affiliationApi";
+import Loader from "@/app/loading";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -68,7 +69,7 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
         }
     }, [singleData]);
     if (isLoading) {
-        return <p>Loading............</p>
+        return <Loader/>
     }
 
     const defaultValues = {
@@ -81,7 +82,7 @@ const UpdateAffiliationModal = ({ open, setOpen, id }: TProps) => {
         <>
             {
                 isLoading ? (
-                    <p>Loading........</p>
+                    <Loader/>
                 ) : (
                     <BNPRightSideModal open={open} setOpen={setOpen} title="Update Team">
                         <FormContainer>

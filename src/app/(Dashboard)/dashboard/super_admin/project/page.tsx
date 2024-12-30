@@ -22,6 +22,7 @@ import CreateProjectModal from "./_components/CreateProjectModal";
 import UpdateProjectModal from "./_components/UpdateProjectModal";
 import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
 import Head from "next/head";
+import Loader from "@/app/loading";
 export type TOppressed = {
     _id: string,
     title: string;
@@ -68,7 +69,7 @@ const ProjectPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
 
     const handleDelete = async (id: string) => {
@@ -149,12 +150,7 @@ const ProjectPage = () => {
                                 startIcon={<AddCircleOutlineIcon />}>
                                 Create Project
                             </Button>
-                            <Button
-                                onClick={handleOpen}
-                                startIcon={<AddCircleOutlineIcon />}>
-                                Create Category
-                            </Button>
-
+                           
                         </div>
                     </Box>
                     <Box bgcolor="white" padding={3}>

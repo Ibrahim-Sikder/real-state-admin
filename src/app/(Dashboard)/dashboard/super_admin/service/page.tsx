@@ -22,6 +22,7 @@ import CreateServiceModal from "./_components/CreateServiceModal";
 import UpdateServiceModal from "./_components/UpdateServiceModal";
 import { useDeleteServoceMutation, useGetAllServoceQuery } from "@/redux/api/serviceApi";
 import ReactHtmlParser from "react-html-parser";
+import Loader from "@/app/loading";
 export type TService = {
   _id: string,
   title: string,
@@ -125,7 +126,7 @@ const ProjectPage = () => {
   const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
   if (isLoading) {
-    return <p>Loading...........</p>;
+    return <Loader/>;
   }
 
   

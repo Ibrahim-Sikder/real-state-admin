@@ -25,7 +25,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider theme={baselightTheme}>
           <Providers>
-            <Toaster />
+            <Toaster richColors position="top-center" />
             <CssBaseline />
             {children}
           </Providers>

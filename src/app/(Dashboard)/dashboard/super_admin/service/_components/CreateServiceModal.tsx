@@ -3,7 +3,7 @@
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
 import ADEditor from "@/components/Forms/JodiEditor";
-import BNPModal from "@/components/Shared/Modal/BNPModal";
+import ANDModal from "@/components/Shared/Modal/ANAModal";
 import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";

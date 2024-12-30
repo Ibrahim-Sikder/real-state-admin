@@ -16,6 +16,7 @@ import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { useDeleteContactMutation, useGetAllContactQuery } from "@/redux/api/informatoinApi";
+import Loader from "@/app/loading";
 
 export type TContact = {
     _id: string,
@@ -47,7 +48,7 @@ const AppointmentPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
 
     const handleDelete = async (id: string) => {

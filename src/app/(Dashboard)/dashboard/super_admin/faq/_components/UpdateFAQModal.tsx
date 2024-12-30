@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useGetSingleFaqQuery, useUpdateFaqMutation } from "@/redux/api/faqApi";
+import Loader from "@/app/loading";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -55,7 +56,7 @@ const UpdateFAQModal = ({ open, setOpen, id }: TProps) => {
     const singleData = data?.data;
 
     if (isLoading) {
-        return <p>Loading............</p>
+        return <Loader/>
     }
 
     const defaultValues = {
@@ -69,7 +70,7 @@ const UpdateFAQModal = ({ open, setOpen, id }: TProps) => {
         <>
             {
                 isLoading ? (
-                    <p>Loading........</p>
+                    <Loader/>
                 ) : (
                     <BNPRightSideModal open={open} setOpen={setOpen} title="Update FAQ">
                         <FormContainer>

@@ -20,6 +20,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useDeleteFaqMutation, useGetAllFaqQuery } from "@/redux/api/faqApi";
 import CreateFAQModal from "./_components/CreateFAQModal";
 import UpdateFAQModal from "./_components/UpdateFAQModal";
+import Loader from "@/app/loading";
 export type TFaq = {
     _id: string,
     answer: string,
@@ -48,7 +49,7 @@ const FAQPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
 
     const handleDelete = async (id: string) => {

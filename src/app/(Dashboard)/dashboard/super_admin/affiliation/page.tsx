@@ -22,6 +22,7 @@ import Image from "next/image";
 import CreateAffiliationModal from "./_components/CreateAffiliationModal";
 import UpdateAffiliationModal from "./_components/UpdateAffiliationModal";
 import { useDeleteAffiliationMutation, useGetAllAffiliationQuery } from "@/redux/api/affiliationApi";
+import Loader from "@/app/loading";
 export type TTeam = {
     _id: string,
     name: string,
@@ -50,7 +51,7 @@ const AffiliationPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <p>Loading...........</p>;
+        return <Loader/>;
     }
 
     const handleDelete = async (id: string) => {

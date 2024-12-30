@@ -10,7 +10,7 @@ type TModalProps = {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     title: string;
     children: React.ReactNode;
-    width?: string | number;  // New prop for width
+    width?: string | number;
     sx?: SxProps;
 };
 
@@ -19,7 +19,7 @@ export default function BNPRightSideModal({
     setOpen,
     title = '',
     children,
-    width = '900px',  // Default width set to 900px
+    width = '900px',
     sx,
 }: TModalProps) {
     const toggleDrawer = (open: boolean) => (
@@ -38,13 +38,13 @@ export default function BNPRightSideModal({
     return (
         <React.Fragment>
             <Drawer
-                anchor="left"
+                anchor="right"
                 open={open}
                 onClose={toggleDrawer(false)}
                 sx={{
                     ...sx,
                     '& .MuiDrawer-paper': {
-                        width: width, 
+                        width: width,
                     },
                 }}
                 ModalProps={{
@@ -73,7 +73,7 @@ export default function BNPRightSideModal({
                 )}
 
                 <div
-                    style={{ }}
+                    style={{}}
                 >
                     {children}
                 </div>

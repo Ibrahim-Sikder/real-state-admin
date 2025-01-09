@@ -13,10 +13,14 @@ import ADImageUpload from "@/components/Forms/FileUpload";
 import ADAutoComplete from "@/components/Forms/AutoComplete";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useCreateProjectMutation } from "@/redux/api/projectApi";
-import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, category, loan_partner, lookingFor, nearby_location, projectCategoryType, projectOffer, tags } from "@/constant";
 import ADCheckbox from "@/components/Forms/checkbox";
 import ADSelect from "@/components/Forms/Select";
-import ADDatePicker from "@/components/Forms/DatePicker";
+import DateTimepicker from "@/components/Forms/DateTimepicker";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -37,7 +41,7 @@ type TProps = {
     initialValues?: FieldValues;
 };
 
-const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour"];
+const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour", "Download BroChure"];
 
 const CreateProjectModal = ({ open, setOpen }: TProps) => {
     const [createProject] = useCreateProjectMutation();
@@ -50,9 +54,13 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
     const [floorImgOpen, setFloorImgOpen] = useState(false);
     const [locationImgOpen, setLocationImgOpen] = useState(false);
 
+
     const [activeStep, setActiveStep] = useState(0);
     const isLastStep = activeStep === steps.length - 1;
 
+    const handleStepClick = (step: number) => {
+        setActiveStep(step);
+    };
 
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
@@ -62,29 +70,24 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
         setActiveStep((prevStep) => prevStep - 1);
     };
     const [videoUrls, setVideoUrls] = useState<string[]>(['']);
+    const [otherState, setOtherState] = useState<string>('');
 
-
+    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+        const newVideoUrls = [...videoUrls];
+        newVideoUrls[index] = event.target.value;
+        setVideoUrls(newVideoUrls);
+    };
 
     const handleAddVideoUrl = () => {
         setVideoUrls([...videoUrls, '']);
     };
 
-
-    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
-        const newVideoUrls = [...videoUrls];
-        newVideoUrls[index] = event.target.value || '';
-        setVideoUrls(newVideoUrls);
-    };
-
-
     const handleRemoveVideoUrl = () => {
-        const newVideoUrls = [...videoUrls];
-
-        if (newVideoUrls.length > 1) {
-            newVideoUrls.pop();
-            setVideoUrls(newVideoUrls);
+        if (videoUrls.length > 1) {
+            setVideoUrls(videoUrls.slice(0, -1));
         }
     };
+
 
 
 
@@ -106,8 +109,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
             floorImages: floorImages || [],
             locationImgs: locationImages || [],
             videoUrls: videoUrls.filter(url => url !== ''),
-            high_budget: Number(values.high_budget),
-            low_budget: Number(values.low_budget)
+
         };
 
 
@@ -130,21 +132,21 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
             <BNPRightSideModal sx={{ width: "900px" }} open={open} setOpen={setOpen} title="Create Projects">
                 <FormContainer>
                     <Stepper activeStep={activeStep} alternativeLabel>
-                        {steps.map((label) => (
-                            <Step key={label}>
+                        {steps.map((label, index) => (
+                            <Step key={label} onClick={() => handleStepClick(index)} style={{ cursor: 'pointer' }}>
                                 <StepLabel>{label}</StepLabel>
                             </Step>
                         ))}
                     </Stepper>
 
-                    <ADForm onSubmit={async (values) => {
-
-                        if (isLastStep) {
-                            await handleSubmit(values);
-                        } else {
-                            handleNext();
-                        }
-                    }}>
+                    <ADForm
+                        onSubmit={async (values) => {
+                            if (isLastStep) {
+                                await handleSubmit(values);
+                            } else {
+                                handleNext();
+                            }
+                        }}>
                         {activeStep === 0 && (
                             <FormSection>
                                 <Grid container spacing={2}>
@@ -162,9 +164,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                         </Box>
                                     </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
-                                    </Grid>
+
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="title" label="Title" />
                                     </Grid>
@@ -172,13 +172,43 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         <ADInput fullWidth name="sub_title" label="Sub Title" />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
+                                        <ADSelect
+                                            label="Project Category Type "
+                                            name="projectCategoryType"
+                                            items={projectCategoryType}
+                                            size="medium"
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADSelect
+                                            label="Looing For"
+                                            name="looking_for"
+                                            items={lookingFor}
+                                            size="medium"
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <ADSelect
+                                            label="Category"
+                                            name="category"
+                                            items={category}
+                                            size="medium"
+                                        />
+                                    </Grid>
+                                   
+                                    <Grid item md={12} sm={12}>
+                                        <ADSelect
+                                            label="Project Offer"
+                                            name="project_offer"
+                                            items={projectOffer}
+                                            size="medium"
+                                        />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
+                                        <DateTimepicker fullWidth name="project_date" label="Project Date " />
+                                    </Grid>
+                                    <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="project_type" label="Project Type " />
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="project_offer" label="Project Offer" />
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADDatePicker fullWidth name="project_date" label="Project Date " />
                                     </Grid>
                                     <Grid item md={12} sm={12}>
                                         <ADInput fullWidth name="project_address" label="Project Address" />
@@ -320,8 +350,9 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="location" label="Location" />
+                                        <ADInput fullWidth name="projectLocation" label="Project Location" />
                                     </Grid>
+
                                     <Grid item md={12} sm={12}>
 
                                         <ADAutoComplete
@@ -351,6 +382,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                                 key={index}
                                                 name={`videoUrls.${index}`}
                                                 label="Video URL"
+                                                value={url}
                                                 onChange={(event) => handleInputChange(index, event)}
                                                 fullWidth
                                             />
@@ -371,28 +403,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                             options={nearby_location}
                                         />
                                     </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADSelect
-                                            label="Category"
-                                            name="category"
-                                            items={category}
-                                        />
 
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADSelect
-                                            label="Looing For"
-                                            name="looking_for"
-                                            items={lookingFor}
-                                        />
-
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="high_budget" label="High Budget" />
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="low_budget" label="Low Budget" />
-                                    </Grid>
 
                                     <Grid item md={12} sm={12}>
                                         <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
@@ -427,6 +438,16 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         />
                                     </Grid>
                                 </Grid>
+                            </FormSection>
+                        )}
+                        {activeStep === 5 && (
+                            <FormSection>
+                                <Grid container spacing={2}>
+                                    <Grid item md={12} sm={12}>
+                                        <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
+                                    </Grid>
+                                </Grid>
+
                             </FormSection>
                         )}
 

@@ -13,9 +13,12 @@ import ADAutoComplete from "@/components/Forms/AutoComplete";
 import { useGetSingleProjectQuery, useUpdateProjectMutation } from "@/redux/api/projectApi";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import ADImageUpload from "@/components/Forms/FileUpload";
-import { additionalFeatures, amenities, apertmentContains, category, high_budget, loan_partner, lookingFor, low_budget, nearby_location, tags } from "@/constant";
+import { additionalFeatures, amenities, apertmentContains, category, high_budget, loan_partner, lookingFor, low_budget, nearby_location, projectCategoryType, projectOffer, tags } from "@/constant";
 import ADSelect from "@/components/Forms/Select";
 import ADDatePicker from "@/components/Forms/DatePicker";
+import DateTimepicker from "@/components/Forms/DateTimepicker";
+import ADCheckbox from "@/components/Forms/checkbox";
+import dayjs from "dayjs";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -37,7 +40,7 @@ type TProps = {
     id: string | null,
 };
 
-const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour"];
+const steps = ["Overview", "Concept ", "Floor Plan ", "Location Map ", "Virtual Tour", "Download BroChure"];
 
 const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const { data, isLoading } = useGetSingleProjectQuery(id);
@@ -55,6 +58,19 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const isLastStep = activeStep === steps.length - 1;
 
 
+
+
+    const singleData = data?.data;
+
+    useEffect(() => {
+        if (singleData?.videoUrls?.length) {
+            setVideoUrls(singleData.videoUrls);
+        }
+    }, [singleData]);
+    const handleStepClick = (step: number) => {
+        setActiveStep(step);
+    };
+
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
     };
@@ -62,42 +78,30 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
-    const singleData = data?.data;
-
     const [videoUrls, setVideoUrls] = useState<string[]>(['']);
+    const [otherState, setOtherState] = useState<string>('');
 
-    useEffect(() => {
-        if (singleData?.videoUrls?.length) {
-            setVideoUrls(singleData.videoUrls);
-        }
-    }, [singleData]);
+    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+        const newVideoUrls = [...videoUrls];
+        newVideoUrls[index] = event.target.value;
+        setVideoUrls(newVideoUrls);
+    };
 
     const handleAddVideoUrl = () => {
         setVideoUrls([...videoUrls, '']);
     };
 
-    const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
-        const newVideoUrls = [...videoUrls];
-        newVideoUrls[index] = event.target.value || '';
-        setVideoUrls(newVideoUrls);
-    };
-
     const handleRemoveVideoUrl = () => {
         if (videoUrls.length > 1) {
-            const newVideoUrls = videoUrls.slice(0, -1);
-            setVideoUrls(newVideoUrls);
+            setVideoUrls(videoUrls.slice(0, -1));
         }
     };
-
     const handleSubmit = async (data: FieldValues) => {
 
 
         data.floorImages = floorImages;
         data.conceptImages = conceptImages;
         data.overviewImages = overviewImages;
-        data.high_budget = Number(data.high_budget),
-            data.low_budget = Number(data.low_budget)
-
         if (Array.isArray(data.meta_keywords)) {
             data.meta_keywords = data.meta_keywords.filter(key => key != null).map(
                 (key: any) => (typeof key === 'object' ? key.meta_keywords : key)
@@ -150,7 +154,6 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         const modifyData = {
             videoUrls,
             ...data
-
         }
         if (Array.isArray(videoUrls)) {
             modifyData.videoUrls = videoUrls.filter((url) => url !== '');
@@ -180,13 +183,13 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         return <p>Loading............</p>
     }
 
-
+    console.log(singleData)
 
     const defaultValues = {
         title: singleData?.title || '',
         sub_title: singleData?.sub_title || '',
         project_type: singleData?.project_type || '',
-        project_date: singleData?.project_date || '',
+        project_date: singleData?.project_date ? dayjs(singleData.project_date) : null,
         project_offer: singleData?.project_offer || '',
         project_address: singleData?.project_address || '',
         land_area: singleData?.land_area || '',
@@ -201,8 +204,8 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         floor_title: singleData?.floor_title || '',
         concept_Location: singleData?.concept_Location || '',
         floor_Location: singleData?.floor_Location || '',
+        projectLocation: singleData?.projectLocation || '',
         virtual_Location: singleData?.virtual_Location || '',
-        map_Location: singleData?.map_Location || '',
         location: singleData?.location || '',
         map_description: singleData?.map_description || '',
         floorImages: singleData?.floorImages || [],
@@ -216,16 +219,14 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         high_budget: singleData?.hight_budget || "",
         low_budget: singleData?.low_budget || "",
         brochure_link: singleData?.brochure_link || "",
+        projectCategoryType: singleData?.projectCategoryType || "",
         category: singleData?.category || '',
         looking_for: singleData?.looking_for || '',
+        map_Location: singleData?.map_Location || [],
         apartment_contains: singleData?.apartment_contains || [],
         special_amenities: singleData?.special_amenities || [],
         common_features: singleData?.common_features || [],
         home_loan_partner: singleData?.home_loan_partner || [],
-
-
-
-
 
     };
 
@@ -238,21 +239,21 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                     <BNPRightSideModal open={open} setOpen={setOpen} title="Update Project">
                         <FormContainer>
                             <Stepper activeStep={activeStep} alternativeLabel>
-                                {steps.map((label) => (
-                                    <Step key={label}>
+                                {steps.map((label, index) => (
+                                    <Step key={label} onClick={() => handleStepClick(index)} style={{ cursor: 'pointer' }}>
                                         <StepLabel>{label}</StepLabel>
                                     </Step>
                                 ))}
                             </Stepper>
 
-                            <ADForm defaultValues={defaultValues} onSubmit={async (values) => {
-
-                                if (isLastStep) {
-                                    await handleSubmit(values);
-                                } else {
-                                    handleNext();
-                                }
-                            }}>
+                            <ADForm defaultValues={defaultValues}
+                                onSubmit={async (values) => {
+                                    if (isLastStep) {
+                                        await handleSubmit(values);
+                                    } else {
+                                        handleNext();
+                                    }
+                                }}>
                                 {activeStep === 0 && (
                                     <FormSection>
                                         <Grid container spacing={2}>
@@ -270,9 +271,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
                                                 </Box>
                                             </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
-                                            </Grid>
+
                                             <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="title" label="Title" />
                                             </Grid>
@@ -280,13 +279,42 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                 <ADInput fullWidth name="sub_title" label="Sub Title" />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Project Category Type "
+                                                    name="projectCategoryType"
+                                                    items={projectCategoryType}
+                                                    size="medium"
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Looing For"
+                                                    name="looking_for"
+                                                    items={lookingFor}
+                                                    size="medium"
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Category"
+                                                    name="category"
+                                                    items={category}
+                                                    size="medium"
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <ADSelect
+                                                    label="Project Offer"
+                                                    name="project_offer"
+                                                    items={projectOffer}
+                                                    size="medium"
+                                                />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+                                                <DateTimepicker fullWidth name="project_date" label="Project Date " />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="project_type" label="Project Type " />
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="project_offer" label="Project Offer" />
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADDatePicker fullWidth name="project_date" label="Project Date " />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="project_address" label="Project Address" />
@@ -296,6 +324,15 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADInput fullWidth name="storied" label="Storied" />
+                                            </Grid>
+
+                                            <Grid item md={12} sm={12}>
+
+                                                <ADAutoComplete
+                                                    label="Institutes & Nearby Locations"
+                                                    name="overview_Location"
+                                                    options={nearby_location}
+                                                />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <ADAutoComplete
@@ -323,15 +360,6 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                     label="Home Loan Partner"
                                                     name="home_loan_partner"
                                                     options={loan_partner}
-                                                />
-                                            </Grid>
-
-                                            <Grid item md={12} sm={12}>
-
-                                                <ADAutoComplete
-                                                    label="Institutes & Nearby Locations"
-                                                    name="overview_Location"
-                                                    options={nearby_location}
                                                 />
                                             </Grid>
                                             <Grid item md={12} sm={12}>
@@ -428,8 +456,9 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                 </Box>
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="location" label="Location" />
+                                                <ADInput fullWidth name="projectLocation" label="Map Location" />
                                             </Grid>
+
                                             <Grid item md={12} sm={12}>
 
                                                 <ADAutoComplete
@@ -449,11 +478,16 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                     <FormSection>
                                         <Grid container spacing={2}>
                                             <Grid item md={12} sm={12}>
+
+                                                <ADCheckbox name="feature" label="Feature Image" />
+                                            </Grid>
+                                            <Grid item md={12} sm={12}>
+
                                                 {videoUrls.map((url, index) => (
                                                     <ADInput
                                                         key={index}
                                                         name={`videoUrls.${index}`}
-                                                        label={`Video URL ${index + 1}`}
+                                                        label="Video URL"
                                                         value={url}
                                                         onChange={(event) => handleInputChange(index, event)}
                                                         fullWidth
@@ -476,31 +510,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                 />
                                             </Grid>
 
-                                            <Grid item md={12} sm={12}>
-                                                <ADSelect
-                                                    label="Category"
-                                                    name="category"
-                                                    items={category}
-                                                />
 
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADSelect
-                                                    label="Looking For"
-                                                    name="looking_for"
-                                                    items={lookingFor}
-                                                />
-
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADSelect items={low_budget} fullWidth name="low_budget" label="Low Budget" />
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADSelect items={high_budget} fullWidth name="high_budget" label="High Budget" />
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="brochure_link" label="Brow Share Link" />
-                                            </Grid>
                                             <Grid item md={12} sm={12}>
                                                 <Typography variant="h5" fontWeight="semibold" marginBottom="10px">
                                                     Buy an Apartment on Easy Installments
@@ -536,6 +546,16 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                         </Grid>
                                     </FormSection>
                                 )}
+                                {activeStep === 5 && (
+                                    <FormSection>
+                                        <Grid container spacing={2}>
+                                            <Grid item md={12} sm={12}>
+                                                <ADInput fullWidth name="brochure_link" label="Brochure pdf Link" />
+                                            </Grid>
+                                        </Grid>
+
+                                    </FormSection>
+                                )}
 
                                 <Box display="flex" justifyContent="space-between" mt={3}>
                                     <Button disabled={activeStep === 0} onClick={handleBack}>
@@ -543,7 +563,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                     </Button>
 
                                     <Button type="submit">
-                                        {isLastStep ? "Submit" : "Next"}
+                                        {isLastStep ? "Updae" : "Next"}
                                     </Button>
                                 </Box>
                             </ADForm>

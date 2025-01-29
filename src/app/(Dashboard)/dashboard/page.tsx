@@ -44,7 +44,6 @@ import {
   Cell
 } from 'recharts';
 
-// Sample data (replace with actual data from your API or database)
 const projectData = [
   { name: 'Residential', value: 400 },
   { name: 'Commercial', value: 300 },

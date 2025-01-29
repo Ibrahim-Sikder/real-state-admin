@@ -18,7 +18,6 @@ import {
   IconPhotoOff,
 } from "@tabler/icons-react";
 import {
-  useDeleteImageMutation,
   useGetAllImagesQuery,
   useGetFoldersQuery,
 } from "@/redux/features/gallery/gallery.api";
@@ -38,7 +37,6 @@ const PhotosPage = () => {
     isFetching,
     refetch,
   } = useGetAllImagesQuery([...params]) as any;
-  const [deleteImage] = useDeleteImageMutation();
   const {
     data: foldersData,
     isLoading: foldersIsLoading,
@@ -127,7 +125,7 @@ const PhotosPage = () => {
                     image={image}
                     fileType={image.url.split(".").pop()?.toLowerCase() || ""}
                     fileIcons={fileIcons}
-                    deleteImage={deleteImage}
+           
                   />
                 ))}
               </Grid>

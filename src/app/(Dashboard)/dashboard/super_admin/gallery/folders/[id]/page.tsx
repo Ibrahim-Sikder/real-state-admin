@@ -19,7 +19,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  useDeleteImageMutation,
+  useDeleteImagesMutation,
   useGetImagesByFolderQuery,
   useUploadImageMutation,
 } from "@/redux/features/gallery/gallery.api";
@@ -81,7 +81,7 @@ const GalleryImages: React.FC<FoldersImagesProps> = ({ params }) => {
   const { handleSubmit, reset } = methods;
 
   const [uploadImage, { isLoading: isUploading }] = useUploadImageMutation();
-  const [deleteImage] = useDeleteImageMutation();
+  const [deleteImage] = useDeleteImagesMutation();
   const onSubmit = async (data: any) => {
     const toastId = toast.loading("Uploading image");
     try {
@@ -103,13 +103,6 @@ const GalleryImages: React.FC<FoldersImagesProps> = ({ params }) => {
         }
       );
     }
-  };
-
-  const getFileType = (url: string) => {
-    const extension = url.split(".").pop()?.toLowerCase();
-    return ["jpg", "jpeg", "png", "webp"].includes(extension || "")
-      ? "image"
-      : extension;
   };
 
   return (
@@ -155,7 +148,7 @@ const GalleryImages: React.FC<FoldersImagesProps> = ({ params }) => {
                     image={image}
                     fileType={image.url.split(".").pop()?.toLowerCase() || ""}
                     fileIcons={fileIcons}
-                    deleteImage={deleteImage}
+                
                   />
                 ))}
               </Grid>

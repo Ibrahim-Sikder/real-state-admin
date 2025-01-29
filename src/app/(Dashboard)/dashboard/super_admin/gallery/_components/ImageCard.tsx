@@ -5,25 +5,19 @@ import {
   Card,
   Grid,
   IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import Image from "next/image";
 import { IconFileTypeCsv } from "@tabler/icons-react";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import { useDeleteImagesMutation } from "@/redux/features/gallery/gallery.api";
 
 interface ImageCardProps {
   image: any;
   fileType: string;
   fileIcons: Record<string, JSX.Element>;
-  deleteImage: ({ public_id, id }: { public_id: string; id: string }) => void;
 }
 
 
@@ -36,37 +30,45 @@ const ImageCard = ({
   const [open, setOpen] = useState(false);
   const router = useRouter()
   const isImageFile = ["jpg", "jpeg", "png",].includes(fileType);
-
-  const handleDeleteClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [deleteImage] = useDeleteImagesMutation();
 
 
-  const handleConfirmDelete = async () => {
 
+  const handleDelete = async (id: string, public_id: string) => {
+    const toastId = toast.loading("Deleting image...");
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/gallery/delete`, {
-        id: image._id,
-        public_id: image.public_id,
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
       });
 
-      if (res.data.success) {
-        toast.success("Image deleted successfully!");
-        setOpen(false);
+      if (result.isConfirmed) {
+        const response = await deleteImage({ id, public_id }).unwrap();
+        toast.success("Image deleted successfully!", {
+          id: toastId,
+          duration: 3000,
+        });
 
-        window.location.reload()
-      } else {
-        toast.error("Failed to delete the image.");
+        Swal.fire("Deleted!", "Your image has been deleted.", "success");
       }
-    } catch (err) {
-      console.error("Error deleting image:", err);
-      toast.error("An error occurred while deleting the image.");
+    } catch (err: any) {
+      console.error("Error deleting Image:", err);
+
+
+      const errorMessage =
+        err?.data?.message || "Failed to delete Image.";
+      toast.error(errorMessage, {
+        id: toastId,
+        duration: 3000,
+      });
     }
   };
+
   return (
     <>
       <Grid item xs={6} sm={4} md={3} lg={2}>
@@ -99,7 +101,7 @@ const ImageCard = ({
             )}
           </Box>
           <IconButton
-            onClick={handleDeleteClick}
+            onClick={() => handleDelete(image._id, image.public_id)}
             sx={{
               position: "absolute",
               top: 8,
@@ -112,27 +114,7 @@ const ImageCard = ({
         </Card>
       </Grid>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="delete-confirmation-dialog"
-      >
-        <DialogTitle id="delete-confirmation-dialog">Delete Image</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this image? This action cannot be
-            undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmDelete} color="secondary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+
     </>
   );
 };

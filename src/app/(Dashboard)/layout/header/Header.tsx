@@ -7,7 +7,7 @@ import {
   Toolbar,
   styled,
 } from "@mui/material";
-import Link from "next/link";
+
 import PropTypes from "prop-types";
 import React from "react";
 import { IconMenu } from "@tabler/icons-react";

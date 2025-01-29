@@ -20,7 +20,7 @@ import {
   IconPhotoOff,
 } from "@tabler/icons-react";
 import {
-  useDeleteImageMutation,
+  useDeleteImagesMutation,
   useGetAllImagesQuery,
   useGetFoldersQuery,
 } from "@/redux/features/gallery/gallery.api";
@@ -64,7 +64,7 @@ const GlobalImageSelector = ({
     refetch,
   } = useGetAllImagesQuery([...params]) as any;
 
-  const [deleteImage] = useDeleteImageMutation();
+  const [deleteImage] = useDeleteImagesMutation();
   const {
     data: foldersData,
     isLoading: foldersIsLoading,
@@ -224,17 +224,7 @@ const GlobalImageSelector = ({
                         fileIcons[fileType] || <IconPhotoOff fontSize="large" />
                       )}
                     </Box>
-                    {/* <IconButton
-                      color="error"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteImage({ id: image._id });
-                      }}
-                      sx={{ position: "absolute", top: 8, right: 8 }}
-                    >
-                      <Delete />
-                    </IconButton> */}
+                   
                   </Box>
                 </Grid>
               );

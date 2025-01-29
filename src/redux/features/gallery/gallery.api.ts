@@ -4,12 +4,6 @@ import { tagTypes } from "@/redux/api/tag-types";
 
 const galleryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // getAllImages: builder.query({
-    //   query: () => ({
-    //     url: "/gallery/all",
-    //     method: "GET",
-    //   }),
-    // }),
     getAllImages: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
@@ -88,28 +82,37 @@ const galleryApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.folder],
     }),
 
-    deleteImage: builder.mutation({
-      query: (data) => {
+    deleteImages: builder.mutation({
+      query: (data: { id: string; public_id: string }) => {
         return {
-          url: "/gallery/delete",
+          url: `/gallery/delete`,
           method: "POST",
-          body: data,
+          data,
         };
       },
       invalidatesTags: [tagTypes.gallery, tagTypes.folder],
     }),
 
+    // uploadImage: builder.mutation({
+    //   query: (data) => {
+    //     return {
+    //       url: "/gallery/upload",
+    //       method: "POST",
+    //       body: data,
+    //       headers: {
+    //         "Content-Type": "multipart",
+    //       },
+    //     };
+    //   },
+    //   invalidatesTags: [tagTypes.gallery, tagTypes.folder],
+    // }),
     uploadImage: builder.mutation({
-      query: (data) => {
-        return {
-          url: "/gallery/upload",
-          method: "POST",
-          body: data,
-          headers: {
-            "Content-Type": "multipart",
-          },
-        };
-      },
+      query: (formData) => ({
+        url: "/gallery/upload",
+        method: "POST",
+        data: formData,
+        contentType: "multipart/form-data",
+      }),
       invalidatesTags: [tagTypes.gallery, tagTypes.folder],
     }),
   }),
@@ -118,7 +121,7 @@ const galleryApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllImagesQuery,
-  useDeleteImageMutation,
+  useDeleteImagesMutation,
   useGetImagesByFolderQuery,
   useGetFoldersQuery,
   useCreateFolderMutation,

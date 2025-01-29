@@ -38,3 +38,14 @@ export type IGenericErrorMessage = {
   path: string | number;
   message: string;
 };
+
+export type TBlog = {
+  _id:string,
+  title: string;
+  thumbnail: [string];
+  description: string;
+  content: string;
+  slug: string;
+  tags: string[];
+  createdAt:string,
+}

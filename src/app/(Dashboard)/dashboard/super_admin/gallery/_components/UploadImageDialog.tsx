@@ -25,6 +25,11 @@ interface Props {
   folders: { _id: string; name: string }[];
 }
 
+interface FileWithPreview {
+  file: File;
+  preview: string;
+}
+
 const validationSchema = z.object({
   folder: z.string().nonempty("Please select a folder"),
   images: z
@@ -58,45 +63,78 @@ const UploadImageDialog = ({ folders }: Props) => {
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    reset(); 
+    reset();
   };
 
 
-  const onSubmit = async (data: any) => {
-    const toastId = toast.loading('Uploading images...');
-    const formData = new FormData();
+  // const onSubmit = async (data: any) => {
+  //   const toastId = toast.loading('Uploading images...');
+  //   const formData = new FormData();
 
+
+  //   if (Array.isArray(data.images) && data.images.length > 0) {
+  //     data.images.forEach((file: File) => {
+  //       formData.append('images', file);
+  //     });
+  //   } else {
+  //     toast.error('Please select at least one image');
+  //     return;
+  //   }
+
+
+  //   formData.append('folder', data.folder);
+
+  //   try {
+
+  //     const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/gallery/upload`, formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+
+  //     toast.success(res.data.message || 'Images uploaded successfully!', {
+  //       id: toastId,
+  //     });
+  //     handleClose(); 
+  //   } catch (error: any) {
+  //     toast.error(
+  //       error.response?.data?.message || error.message || 'An error occurred',
+  //       { id: toastId },
+  //     );
+  //   }
+  // };
+
+  const onSubmit = async (data: any) => {
+    // const toastId = toast.loading("Uploading images...");
+    const formData = new FormData();
 
     if (Array.isArray(data.images) && data.images.length > 0) {
       data.images.forEach((file: File) => {
-        formData.append('images', file);
+        formData.append("images", file);
       });
     } else {
-      toast.error('Please select at least one image');
+      toast.error("Please select at least one image");
       return;
     }
 
- 
-    formData.append('folder', data.folder);
+    formData.append("folder", data.folder);
 
     try {
-     
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/gallery/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      data.images.forEach((fileWithPreview: FileWithPreview) => {
+        formData.append("images", fileWithPreview.file);
       });
 
-      console.log(res)
-      toast.success(res.data.message || 'Images uploaded successfully!', {
-        id: toastId,
-      });
-      handleClose(); 
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || error.message || 'An error occurred',
-        { id: toastId },
-      );
+      const result = await uploadImage(formData).unwrap();
+
+      toast.success(result.message || "Images Uploaded Successfully!");
+
+      handleClose();
+
+
+    } catch (err: any) {
+      const errorMessage =
+        err.data?.message || err.data?.errorMessages?.[0] || "Upload failed";
+      toast.error(errorMessage);
     }
   };
   return (

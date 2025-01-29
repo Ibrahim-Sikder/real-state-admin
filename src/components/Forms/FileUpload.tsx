@@ -53,35 +53,38 @@ const ADImageUpload = ({ name, setImageUrls, imageUrls = [], label, onClick }: I
       name={name}
       render={() => (
         <Box sx={{ padding: "20px", textAlign: "center", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <Box
-            sx={{
-              textAlign: "center",
-              background: "#fff",
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-              width: "130px",
-              height: "130px",
-              borderRadius: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              cursor: "pointer",
-              flexDirection: "column",
-              marginBottom: "20px",
-            }}
-            onClick={onClick}
-          >
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-            <CloudUpload sx={{ color: "#216740", fontSize: 60, borderRadius: "100%" }} />
-            <Typography component="p" fontSize="11px" fontWeight="bold">
-              {loading ? "Uploading..." : label}
-            </Typography>
-          </Box>
+          {/* Hide the upload box if images exist */}
+          {imageUrls.length === 0 && (
+            <Box
+              sx={{
+                textAlign: "center",
+                background: "#fff",
+                boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                width: "130px",
+                height: "130px",
+                borderRadius: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                flexDirection: "column",
+                marginBottom: "20px",
+              }}
+              onClick={onClick}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <CloudUpload sx={{ color: "#216740", fontSize: 60, borderRadius: "100%" }} />
+              <Typography component="p" fontSize="11px" fontWeight="bold">
+                {loading ? "Uploading..." : label}
+              </Typography>
+            </Box>
+          )}
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
             {Array.isArray(imageUrls) && imageUrls.length > 0 &&

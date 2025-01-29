@@ -25,7 +25,14 @@ export const theme = createTheme({
     },
     MuiContainer: {
       defaultProps: {
-        maxWidth: "lg",
+        maxWidth: false, 
+      },
+      styleOverrides: {
+        root: {
+          width: "100% !important", 
+          paddingLeft: "16px",
+          paddingRight: "16px",
+        },
       },
     },
   },

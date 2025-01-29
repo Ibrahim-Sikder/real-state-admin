@@ -33,7 +33,7 @@ export default function RootLayout({
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   return (
-    <MainWrapper className="mainwrapper">
+    <MainWrapper>
       <Head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -51,17 +51,17 @@ export default function RootLayout({
         <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
         <Container
           sx={{
-            paddingTop: "20px",
+            background: '#F3F4F6',
             maxWidth: {
               xs: "100%",
               sm: "100%",
               md: "100%",
               lg: "100%",
-              xl: "calc(100% - 150px)",
+              xl: "100",
             },
           }}
         >
-          <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
+          <Box sx={{ minHeight: "100vh", background: '#F3F4F6', paddingTop: '30px' }}>{children}</Box>
         </Container>
         ;
       </PageWrapper>

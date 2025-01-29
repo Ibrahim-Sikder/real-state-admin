@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { useMediaQuery, Box, Drawer, Typography } from "@mui/material";
-import { Sidebar, Logo } from "react-mui-sidebar";
-import SideBarItems from "./SidebarItems";
-import drawerItems from "./MenuItems";
-import Link from "next/link";
-
+import { useMediaQuery, Box, Drawer } from "@mui/material";
+import DrawerItems from "./DrawerItems";
 interface MSidebarProps {
   isMobileSidebarOpen: boolean;
   onSidebarClose: () => void;
   isSidebarOpen: boolean;
 }
-
 const MSidebar = ({
   isMobileSidebarOpen,
   onSidebarClose,
@@ -28,13 +23,13 @@ const MSidebar = ({
     },
   };
 
-
-
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
 
   const handleAccordionChange = (index: any) => {
     setOpenAccordion(openAccordion === index ? null : index);
   };
+
+
   if (lgUp) {
     return (
       <Box sx={{ width: sidebarWidth, flexShrink: 0 }}>
@@ -54,36 +49,7 @@ const MSidebar = ({
           }}
         >
           <Box sx={{ height: "100%" }}>
-            <Sidebar
-              width={sidebarWidth}
-              collapsewidth="80px"
-              isCollapse={false}
-              mode="light"
-              direction="ltr"
-              themeColor="#5d87ff"
-              themeSecondaryColor="#fff"
-              showProfile={false}
-            >
-              <Link href='/dashboard' style={{ textDecoration: 'none' }}>
-                <Typography
-                  textAlign="center"
-                  fontWeight="bold"
-                  variant="h5"
-                  marginTop="10px"
-                  color='white'
-
-
-                >
-                  Anaa Developer
-                </Typography>
-              </Link>
-              <Box sx={{ mt: 2 }}>
-                {drawerItems('super_admin').map((item, index) => (
-                  <SideBarItems openAccordion={openAccordion}
-                    onAccordionChange={handleAccordionChange} key={index} item={item} index={index} />
-                ))}
-              </Box>
-            </Sidebar>
+            <DrawerItems />
           </Box>
         </Drawer>
       </Box>
@@ -99,29 +65,16 @@ const MSidebar = ({
       PaperProps={{
         sx: {
           boxShadow: (theme) => theme.shadows[8],
-          backgroundColor: "#ffffff",
+          backgroundColor: "#216740",
           padding: "10px",
+          color: '#fff',
           borderRight: "1px solid #ddd",
           ...scrollbarStyles,
         },
       }}
     >
       <Box px={2}>
-        <Sidebar
-          width={sidebarWidth}
-          collapsewidth="80px"
-          isCollapse={false}
-          mode="light"
-          direction="ltr"
-          themeColor="#5d87ff"
-          themeSecondaryColor="#49beff"
-          showProfile={false}
-        >
-          <Logo img="/images/logos/dark-logo.svg" />
-          {drawerItems('super_admin').map((item, index) => (
-            <SideBarItems openAccordion={openAccordion} onAccordionChange={handleAccordionChange} key={index} item={item} index={index} />
-          ))}
-        </Sidebar>
+        <DrawerItems />
       </Box>
     </Drawer>
   );

@@ -2,7 +2,7 @@
 
 import { USER_ROLE } from "@/constant/role";
 import { DrawerItem, userRole } from "@/types/common";
-import { AccountBalance, AccountTreeTwoTone, AdsClick, BookOnline, Collections, ContactMail, Diversity1, Diversity2, LiveHelp, Reviews, Roofing, } from "@mui/icons-material";
+import { AccountBalance, AccountTreeTwoTone, AdsClick, BookOnline, Collections, ContactMail, Diversity1, Diversity2, LiveHelp, Reviews, Roofing, Settings, } from "@mui/icons-material";
 import {
   IconAperture,
   IconUsersGroup,
@@ -23,7 +23,7 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           title: "Project",
           path: `/dashboard/${role}/project`,
           icon: AccountTreeTwoTone,
-          
+
         },
         {
           title: "Services",
@@ -90,6 +90,21 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           title: "Users Management",
           path: `/dashboard/${role}/users`,
           icon: IconUsersGroup,
+        },
+        {
+          title: "Backup & Settings",
+          path: `${role}/gallery`,
+          icon: Settings,
+          child: [
+            {
+              title: "Frontend",
+              path: `${role}/settings/frontend`,
+            },
+            {
+              title: "Backup",
+              path: `${role}/settings/backup`,
+            },
+          ],
         },
       );
       break;

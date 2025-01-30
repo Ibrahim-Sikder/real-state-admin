@@ -134,7 +134,7 @@ export default function BlogForm() {
 
 
     const singleBlog = data?.data
-    console.log(singleBlog)
+
     useEffect(() => {
         if (singleBlog) {
             setThumbnail(singleBlog?.thumbnail || "");

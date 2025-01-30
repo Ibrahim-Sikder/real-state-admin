@@ -22,7 +22,7 @@ export const addIconStyle = {
     textTransform: "none",
     backgroundColor: "#216740",
     "&:hover": {
-        backgroundColor: "#1A1F2C",
+        backgroundColor: "#216740",
     },
 }
 
@@ -34,3 +34,19 @@ export const btnStyle = {
     color: "text.primary",
     borderColor: "divider",
 }
+
+export const iconButtonStyle = {
+    width: '30px',
+    height: '30px',
+    borderRadius: '100%',
+    padding: '0px',
+    color: 'white',
+    background: 'red',
+    marginLeft: '2px',
+    marginRight: '2px',
+    '&:hover': {
+      background: 'black',
+      color: 'white',
+    },
+  };
+  export const iconStyle = { fontSize: '20px' }

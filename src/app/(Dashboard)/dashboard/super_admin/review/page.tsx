@@ -1,42 +1,44 @@
-"use client";
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import Paper from "@mui/material/Paper";
-import TableRow from "@mui/material/TableRow";
-import TableBody from "@mui/material/TableBody";
+
+"use client"
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Button,
+    Box,
+    Typography,
+    Pagination,
+    Stack,
+} from "@mui/material"
+import {
+    AddIcCallOutlined,
+    ArrowBack,
+} from "@mui/icons-material"
+import Image from "next/image"
+import { TReview, TService, TTeam } from "@/types"
+import { addIconStyle, cellStyle, iconButtonStyle, iconStyle, tableHeadStyle, tableStyle } from "@/customStyle"
+import Loader from "@/app/loading"
+import Swal from "sweetalert2"
+import { toast } from "sonner"
+import parse from "html-react-parser";
 import EditIcon from "@mui/icons-material/Edit";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Pagination, Stack, Typography } from "@mui/material";
-import TableContainer from "@mui/material/TableContainer";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
-import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
-import { toast } from "sonner";
-import Swal from "sweetalert2";
-import { useDeleteTeamMutation, useGetAllTeamQuery } from "@/redux/api/teamApi";
-import Image from "next/image";
-import CreateReviewModal from "./_components/CreateReviewModal";
-import UpdateReviewModal from "./_components/UpdateReviewModal";
-import { useDeletereviewMutation, useGetAllreviewQuery } from "@/redux/api/reviewApi";
-import Loader from "@/app/loading";
-export type TTeam = {
-    _id: string,
-    name: string,
-    date: string,
-    designation: string,
-    images: string[],
-    description: string,
-    createdAt: string,
-    title: string,
+import { useDeleteServoceMutation, useGetAllServoceQuery } from "@/redux/api/serviceApi"
+import truncateText from "@/utils/truncate"
 
-};
-
-
-const ProjectPage = () => {
+import { useRouter } from "next/navigation"
+import { useDeleteTeamMutation, useGetAllTeamQuery } from "@/redux/api/teamApi"
+import { useState } from "react"
+import { useDeletereviewMutation, useGetAllreviewQuery } from "@/redux/api/reviewApi"
+import CreateReviewModal from "./_components/CreateReviewModal"
+import UpdateReviewModal from "./_components/UpdateReviewModal"
+export default function BlogTable() {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
@@ -44,7 +46,7 @@ const ProjectPage = () => {
     const { data: reviewData, isLoading } = useGetAllreviewQuery({ page: currentPage, limit: 10 });
     const [deleteReview] = useDeletereviewMutation();
     const handleOpen = () => setOpen(true);
-
+    const router = useRouter()
     const hanldeOpenUpdateModal = (id: string) => {
         setSelectedTortureId(id);
         setOpenUpdateModal(true);
@@ -54,7 +56,7 @@ const ProjectPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <Loader/>;
+        return <Loader />;
     }
 
 
@@ -91,130 +93,131 @@ const ProjectPage = () => {
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
     };
-
-    const formatDate = (dateString: string | number | Date) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, "0");
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    }
-
-    const iconButtonStyle = {
-        width: '30px',
-        height: '30px',
-        borderRadius: '100%',
-        padding: '0px',
-        color: 'white',
-        background: 'red',
-        marginLeft: '2px',
-        marginRight: '2px',
-        '&:hover': {
-            background: 'black',
-            color: 'white',
-        },
+    const handleBack = () => {
+        router.back();
     };
-    const iconStyle = { fontSize: '20px' }
+
 
     return (
-        <PageContainer>
-            <DashboardCard>
-                <Box>
+        <Box sx={{ width: "100%", p: 2 }}>
+            <Box
+                sx={tableHeadStyle}
+            >
+                <Typography variant="h6" component="h1" sx={{ fontWeight: 500 }}>
+                    Reviews ({reviewData?.data?.reviews?.length})
+                </Typography>
 
-                    <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>Reviews </Typography>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                        onClick={handleBack}
+                        startIcon={<ArrowBack />}
+                        sx={{ mr: 2, color: "#fff" }}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        onClick={handleOpen}
 
-                        <Button
-                            onClick={handleOpen}
-                            startIcon={<AddCircleOutlineIcon />}>
-                            Create Review
-                        </Button>
-
-                    </Box>
-                    <Box bgcolor="white" padding={3}>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Image</TableCell>
-                                        <TableCell align="center">Name</TableCell>
-                                        <TableCell align="center">Designation</TableCell>
-                                        <TableCell align="center">Title</TableCell>
-                                        <TableCell align="center">Description</TableCell>
-                                        <TableCell align="center">Created Date</TableCell>
-                                        <TableCell align="center">Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {reviewData?.data?.reviews?.map((data: TTeam, index: number) => (
-                                        <TableRow
-                                            key={data._id}
-                                            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                        >
-                                            <TableCell align="center">{index + 1}</TableCell>
-                                            {
-                                                data.images.slice(0, 1).map((img) => (
-                                                    <>
-                                                        <Image width={50} height={50} className="w-20" src={img} alt='activity' />
-                                                    </>
-                                                ))
-                                            }
-                                            <TableCell align="center">{data.name} </TableCell>
-                                            <TableCell align="center">{data.designation} </TableCell>
-                                            <TableCell align="center">{data.title} </TableCell>
-                                            <TableCell align="center">{data.description.slice(0, 30)}... </TableCell>
-
-                                            <TableCell align="center">
-                                                {formatDate(data.createdAt)}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <div className="flex justify-center gap-2 ">
-
-                                                    <IconButton
-                                                        sx={{ ...iconButtonStyle, background: '#216740' }}
-                                                        title="Edit"
-                                                        onClick={() => hanldeOpenUpdateModal(data._id)}   >
-                                                        <EditIcon sx={iconStyle} />
-                                                    </IconButton>
-
-                                                    <IconButton
-                                                        sx={iconButtonStyle}
-                                                        onClick={() => handleDelete(data._id)}
-                                                        title="Delete"
-                                                    >
-                                                        <DeleteIcon sx={iconStyle} className="text-red-600" />
-                                                    </IconButton>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                    {open && (
-                        <CreateReviewModal
-                            open={open}
-                            setOpen={handleClose}
-
-                        />
-                    )}
-                    {openUpdateModal && (
-                        <UpdateReviewModal
-                            open={openUpdateModal}
-                            setOpen={handleCloseUpdateModal}
-                            id={selectedTortureId}
-                        />
-                    )}
+                        variant="contained"
+                        startIcon={<AddIcCallOutlined />}
+                        sx={addIconStyle}
+                    >
+                        Add Review
+                    </Button>
                 </Box>
-            </DashboardCard>
+            </Box>
+
+
+
+            <TableContainer component={Paper} sx={{ mb: 2, mt: 5 }}>
+                <Table sx={tableStyle}>
+                    <TableHead>
+                        <TableRow>
+
+                            <TableCell sx={cellStyle}>SL No</TableCell>
+                            <TableCell sx={cellStyle}>Image</TableCell>
+                            <TableCell sx={cellStyle}>Name</TableCell>
+                            <TableCell sx={cellStyle}>Designation</TableCell>
+                            <TableCell sx={cellStyle}>Title</TableCell>
+                            <TableCell sx={cellStyle}>Description</TableCell>
+                            <TableCell sx={cellStyle}>Created Date</TableCell>
+                            <TableCell sx={cellStyle}>Actions</TableCell>
+
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {reviewData?.data?.reviews?.map((data: TReview, index: number) => (
+                            <TableRow key={data._id}>
+                                <TableCell sx={cellStyle}>
+                                    {index + 1}
+                                </TableCell>
+                                <TableCell sx={cellStyle}>{
+                                    data.images.slice(0, 1).map((img) => (
+                                        <>
+                                            <Image width={50} height={50} className="w-20" src={img} alt='activity' />
+                                        </>
+                                    ))
+                                }</TableCell>
+                                <TableCell >{data.name} </TableCell>
+                                <TableCell>{data.designation} </TableCell>
+                                <TableCell >{data.title} </TableCell>
+                                <TableCell>{data.description.slice(0, 30)}... </TableCell>
+
+                                <TableCell sx={cellStyle}>
+
+
+                                    {
+                                        new Date(data?.createdAt).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })
+                                    }
+
+                                </TableCell>
+                                <TableCell >
+                                    <div className="flex justify-center gap-2 ">
+
+                                        <IconButton
+                                            sx={{ ...iconButtonStyle, background: '#216740' }}
+                                            title="Edit"
+                                            onClick={() => hanldeOpenUpdateModal(data._id)}
+                                        >
+                                            <EditIcon sx={iconStyle} />
+                                        </IconButton>
+
+                                        <IconButton
+                                            sx={iconButtonStyle}
+                                            onClick={() => handleDelete(data._id)}
+                                            title="Delete"
+                                        >
+                                            <DeleteIcon sx={iconStyle} className="text-red-600" />
+                                        </IconButton>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            {open && (
+                <CreateReviewModal
+                    open={open}
+                    setOpen={handleClose}
+
+                />
+            )}
+            {openUpdateModal && (
+                <UpdateReviewModal
+                    open={openUpdateModal}
+                    setOpen={handleCloseUpdateModal}
+                    id={selectedTortureId}
+                />
+            )}
             <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
                 <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
             </Stack>
+        </Box>
+    )
+}
 
-        </PageContainer>
-    );
-};
-
-export default ProjectPage;

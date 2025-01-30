@@ -1,57 +1,42 @@
-"use client";
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import Paper from "@mui/material/Paper";
-import TableRow from "@mui/material/TableRow";
-import TableBody from "@mui/material/TableBody";
+
+"use client"
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Button,
+    Box,
+    Typography,
+    Pagination,
+    Stack,
+} from "@mui/material"
+import {
+    AddIcCallOutlined,
+    ArrowBack,
+} from "@mui/icons-material"
+import Image from "next/image"
+import { TProject, TService } from "@/types"
+import { addIconStyle, cellStyle, iconButtonStyle, iconStyle, tableHeadStyle, tableStyle } from "@/customStyle"
+import Loader from "@/app/loading"
+import Swal from "sweetalert2"
+import { toast } from "sonner"
+import parse from "html-react-parser";
 import EditIcon from "@mui/icons-material/Edit";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Pagination, Stack, Typography } from "@mui/material";
-import TableContainer from "@mui/material/TableContainer";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
-import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
-import { toast } from "sonner";
-import Image from "next/image";
-import Swal from "sweetalert2";
-import CreateProjectModal from "./_components/CreateProjectModal";
-import UpdateProjectModal from "./_components/UpdateProjectModal";
-import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi";
-import Head from "next/head";
-import Loader from "@/app/loading";
-export type TOppressed = {
-    _id: string,
-    title: string;
-    sub_title: string;
-    project_type: string;
-    project_address: string;
-    land_area: string;
-    storied: string;
-    apartment_contains: string;
-    overview_Location: string[];
-    short_description: string;
-    overview_description: string;
-    concept_Location?: string[];
-    concept_description?: string;
-    floor_title?: string;
-    floor_Location?: string[];
-    floor_description?: string;
-    map_Location?: string[];
-    map_description?: string;
-    conceptImage?: string;
-    overviewImage?: string;
-    videoUrls?: string[];
-    locationImg: string,
-    createdAt: string,
-    floorImage: string,
-};
-
-
-const ProjectPage = () => {
+import { useDeleteServoceMutation, useGetAllServoceQuery } from "@/redux/api/serviceApi"
+import truncateText from "@/utils/truncate"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useDeleteProjectMutation, useGetAllProjectQuery } from "@/redux/api/projectApi"
+import CreateProjectModal from "./_components/CreateProjectModal"
+import UpdateProjectModal from "./_components/UpdateProjectModal"
+export default function BlogTable() {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
@@ -59,7 +44,7 @@ const ProjectPage = () => {
     const { data: projectData, isLoading } = useGetAllProjectQuery({ page: currentPage, limit: 10 });
     const [deleteProject] = useDeleteProjectMutation();
     const handleOpen = () => setOpen(true);
-
+    const router = useRouter()
     const hanldeOpenUpdateModal = (id: string) => {
         setSelectedTortureId(id);
         setOpenUpdateModal(true);
@@ -69,7 +54,7 @@ const ProjectPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <Loader/>;
+        return <Loader />;
     }
 
     const handleDelete = async (id: string) => {
@@ -106,130 +91,121 @@ const ProjectPage = () => {
         setCurrentPage(page);
     };
 
-    const formatDate = (dateString: string | number | Date) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, "0");
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    }
-
-    const iconButtonStyle = {
-        width: '30px',
-        height: '30px',
-        borderRadius: '100%',
-        padding: '0px',
-        color: 'white',
-        background: 'red',
-        marginLeft: '2px',
-        marginRight: '2px',
-        '&:hover': {
-            background: 'black',
-            color: 'white',
-        },
+    const handleBack = () => {
+        router.back();
     };
-    const iconStyle = { fontSize: '20px' }
 
 
     return (
-        <PageContainer>
-            <Head>
-                <title>Our Projects - Anaa Developers Ltd </title>
+        <Box sx={{ width: "100%", p: 2 }}>
+            <Box
+                sx={tableHeadStyle}
+            >
+                <Typography variant="h6" component="h1" sx={{ fontWeight: 500 }}>
+                    All Project ({projectData?.data?.projects?.length})
+                </Typography>
 
-            </Head>
-            <DashboardCard>
-                <Box>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                        onClick={handleBack}
+                        startIcon={<ArrowBack />}
+                        sx={{ mr: 2, color: "#fff" }}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        onClick={handleOpen}
 
-                    <Box display='flex' justifyContent='space-between'>
-                        <Typography variant="h5" fontWeight='bold'>Our Project </Typography>
-
-                        <div className="flex items-center gap-2 ">
-                            <Button
-                                sx={{ marginRight: '3px' }}
-                                onClick={handleOpen}
-                                startIcon={<AddCircleOutlineIcon />}>
-                                Create Project
-                            </Button>
-                           
-                        </div>
-                    </Box>
-                    <Box bgcolor="white" padding={3}>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">SL No</TableCell>
-                                        <TableCell align="center">Title</TableCell>
-                                        <TableCell align="center">Sub Title</TableCell>
-                                        <TableCell align="center">Short Description </TableCell>
-                                        <TableCell align="center">Created Date</TableCell>
-                                        <TableCell align="center">Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {projectData?.data?.projects?.map((data: TOppressed, index: number) => (
-                                        <TableRow
-                                            key={data._id}
-                                            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                        >
-                                            <TableCell align="center">{index + 1}</TableCell>
-                                            {/* <TableCell align="center">
-                                                <Image width={50} height={50} className="w-20" src={data.floorImage} alt='activity' />
-                                            </TableCell> */}
-                                            <TableCell align="center">{data.title} </TableCell>
-
-                                            <TableCell align="center">{data.sub_title}</TableCell>
-                                            <TableCell align="center">{data.short_description.slice(0, 50)}</TableCell>
-
-                                            <TableCell align="center">{formatDate(data.createdAt)}</TableCell>
-                                            <TableCell align="center">
-                                                <div className="flex justify-center gap-2 ">
-
-                                                    <IconButton
-                                                        sx={{ ...iconButtonStyle, background: '#216740' }}
-                                                        title="Edit"
-                                                        onClick={() => hanldeOpenUpdateModal(data._id)}
-                                                    >
-                                                        <EditIcon sx={iconStyle} />
-                                                    </IconButton>
-
-                                                    <IconButton
-                                                        sx={iconButtonStyle}
-                                                        onClick={() => handleDelete(data._id)}
-                                                        title="Delete"
-                                                    >
-                                                        <DeleteIcon sx={iconStyle} className="text-red-600" />
-                                                    </IconButton>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                    {open && (
-                        <CreateProjectModal
-                            open={open}
-                            setOpen={handleClose}
-
-                        />
-                    )}
-                    {openUpdateModal && (
-                        <UpdateProjectModal
-                            open={openUpdateModal}
-                            setOpen={handleCloseUpdateModal}
-                            id={selectedTortureId}
-                        />
-                    )}
+                        variant="contained"
+                        startIcon={<AddIcCallOutlined />}
+                        sx={addIconStyle}
+                    >
+                        Add Project
+                    </Button>
                 </Box>
-            </DashboardCard>
+            </Box>
+
+
+
+            <TableContainer component={Paper} sx={{ mb: 2, mt: 5 }}>
+                <Table sx={tableStyle}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={cellStyle}>SL No</TableCell>
+                            <TableCell sx={cellStyle}>Title</TableCell>
+                            <TableCell sx={cellStyle}>Sub Title</TableCell>
+                            <TableCell sx={cellStyle}>Short Description </TableCell>
+                            <TableCell sx={cellStyle}>Created Date</TableCell>
+                            <TableCell sx={cellStyle}>Actions</TableCell>
+
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {projectData?.data?.projects?.map((data: TProject, index: number) => (
+                            <TableRow key={data._id}>
+                                <TableCell sx={cellStyle}>
+                                    {index + 1}
+                                </TableCell>
+
+                                <TableCell>{data.title} </TableCell>
+                                <TableCell >{data.sub_title}</TableCell>
+                                <TableCell >{data.short_description.slice(0, 50)}</TableCell>
+
+                                <TableCell>
+
+
+                                    {
+                                        new Date(data?.createdAt).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })
+                                    }
+
+                                </TableCell>
+                                <TableCell >
+                                    <div className="flex justify-center gap-2 ">
+
+                                        <IconButton
+                                            sx={{ ...iconButtonStyle, background: '#216740' }}
+                                            title="Edit"
+                                            onClick={() => hanldeOpenUpdateModal(data._id)}
+                                        >
+                                            <EditIcon sx={iconStyle} />
+                                        </IconButton>
+
+                                        <IconButton
+                                            sx={iconButtonStyle}
+                                            onClick={() => handleDelete(data._id)}
+                                            title="Delete"
+                                        >
+                                            <DeleteIcon sx={iconStyle} className="text-red-600" />
+                                        </IconButton>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            {open && (
+                <CreateProjectModal
+                    open={open}
+                    setOpen={handleClose}
+
+                />
+            )}
+            {openUpdateModal && (
+                <UpdateProjectModal
+                    open={openUpdateModal}
+                    setOpen={handleCloseUpdateModal}
+                    id={selectedTortureId}
+                />
+            )}
             <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
                 <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
             </Stack>
+        </Box>
+    )
+}
 
-        </PageContainer>
-    );
-};
-
-export default ProjectPage;

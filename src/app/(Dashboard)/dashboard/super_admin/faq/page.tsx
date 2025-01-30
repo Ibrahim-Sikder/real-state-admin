@@ -1,37 +1,38 @@
-"use client";
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import Paper from "@mui/material/Paper";
-import TableRow from "@mui/material/TableRow";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Pagination, Stack, Typography } from "@mui/material";
-import TableContainer from "@mui/material/TableContainer";
-import PageContainer from "@/app/(Dashboard)/components/container/PageContainer";
-import DashboardCard from "@/app/(Dashboard)/components/shared/DashboardCard";
-import { toast } from "sonner";
-import Swal from "sweetalert2";
+
+"use client"
+
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    Button,
+    Box,
+    Typography,
+    Pagination,
+    Stack,
+} from "@mui/material"
+import {
+    AddIcCallOutlined,
+    ArrowBack,
+} from "@mui/icons-material"
+import { TFaq } from "@/types"
+import { addIconStyle, cellStyle, iconButtonStyle, iconStyle, tableHeadStyle, tableStyle } from "@/customStyle"
+import Loader from "@/app/loading"
+import Swal from "sweetalert2"
+import { toast } from "sonner"
 import EditIcon from "@mui/icons-material/Edit";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useDeleteFaqMutation, useGetAllFaqQuery } from "@/redux/api/faqApi";
-import CreateFAQModal from "./_components/CreateFAQModal";
-import UpdateFAQModal from "./_components/UpdateFAQModal";
-import Loader from "@/app/loading";
-export type TFaq = {
-    _id: string,
-    answer: string,
-    question: string,
-    createdAt: string,
-    date: string,
-
-};
-
-
-const FAQPage = () => {
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useDeleteFaqMutation, useGetAllFaqQuery } from "@/redux/api/faqApi"
+import CreateFAQModal from "./_components/CreateFAQModal"
+import UpdateFAQModal from "./_components/UpdateFAQModal"
+export default function BlogTable() {
     const [open, setOpen] = useState(false);
     const [openUpdateModal, setOpenUpdateModal] = useState(false);
     const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null);
@@ -39,7 +40,7 @@ const FAQPage = () => {
     const { data: faqData, isLoading } = useGetAllFaqQuery({ page: currentPage, limit: 5 });
     const [deleteFaq] = useDeleteFaqMutation();
     const handleOpen = () => setOpen(true);
-
+    const router = useRouter()
     const hanldeOpenUpdateModal = (id: string) => {
         setSelectedTortureId(id);
         setOpenUpdateModal(true);
@@ -49,9 +50,8 @@ const FAQPage = () => {
     const handleCloseUpdateModal = () => setOpenUpdateModal(false);
 
     if (isLoading) {
-        return <Loader/>;
+        return <Loader />;
     }
-
     const handleDelete = async (id: string) => {
         Swal.fire({
             title: "Are you sure?",
@@ -86,129 +86,121 @@ const FAQPage = () => {
         setCurrentPage(page);
     };
 
-    const formatDate = (dateString: string | number | Date) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, "0");
-        const month = (date.getMonth() + 1).toString().padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    }
-
-    const iconButtonStyle = {
-        width: '30px',
-        height: '30px',
-        borderRadius: '100%',
-        padding: '0px',
-        color: 'white',
-        background: 'red',
-        marginLeft: '2px',
-        marginRight: '2px',
-        '&:hover': {
-            background: 'black',
-            color: 'white',
-        },
+    const handleBack = () => {
+        router.back();
     };
-    const iconStyle = { fontSize: '20px' }
+
 
     return (
-        <PageContainer>
-            <>
+        <Box sx={{ width: "100%", p: 2 }}>
+            <Box
+                sx={tableHeadStyle}
+            >
+                <Typography variant="h6" component="h1" sx={{ fontWeight: 500 }}>
+                    FAQ ({faqData?.data?.faqs?.length})
+                </Typography>
 
-                <DashboardCard>
-                    <>
-                    <Box>
-
-<Box display='flex' justifyContent='space-between'>
-    <Typography variant="h5" fontWeight='bold'>Question & Answer </Typography>
-    <Button
-        onClick={handleOpen}
-        startIcon={<AddCircleOutlineIcon />}>
-        Create FAQ
-    </Button>
-</Box>
-<Box bgcolor="white" padding={3}>
-    <TableContainer component={Paper}>
-        <Table aria-label="simple table">
-            <TableHead>
-                <TableRow>
-                    <TableCell align="center">SL No</TableCell>
-                    <TableCell align="center">Question</TableCell>
-                    <TableCell align="center">Answer</TableCell>
-                    <TableCell align="center">Create Date </TableCell>
-
-                    <TableCell align="center">Actions</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {faqData?.data?.faqs?.map((data: TFaq, index: number) => (
-                    <TableRow
-                        key={data._id}
-                        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button
+                        onClick={handleBack}
+                        startIcon={<ArrowBack />}
+                        sx={{ mr: 2, color: "#fff" }}
                     >
-                        <TableCell align="center">{index + 1}</TableCell>
+                        Back
+                    </Button>
+                    <Button
+                        onClick={handleOpen}
 
-                        <TableCell align="center">{data.question.slice(0, 50)}  </TableCell>
-                        <TableCell align="center">{data.answer.slice(0, 50)}  </TableCell>
-
-
-                        <TableCell align="center">
-                            {formatDate(data.date)}
-
-
-                        </TableCell>
-                        <TableCell align="center">
-                            <div className="flex justify-center gap-2 ">
-
-                                <IconButton
-                                    sx={{ ...iconButtonStyle, background: '#216740' }}
-                                    title="Edit"
-                                    onClick={() => hanldeOpenUpdateModal(data._id)}
-                                >
-                                    <EditIcon sx={iconStyle} />
-                                </IconButton>
-
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => handleDelete(data._id)}
-                                    title="Delete"
-                                >
-                                    <DeleteIcon sx={iconStyle} className="text-red-600" />
-                                </IconButton>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    </TableContainer>
-</Box>
-
-</Box>
-
-{open && (
-<CreateFAQModal
-    open={open}
-    setOpen={handleClose}
-
-/>
-)}
-{openUpdateModal && (
-<UpdateFAQModal
-    open={openUpdateModal}
-    setOpen={handleCloseUpdateModal}
-    id={selectedTortureId}
-/>
-)}
-                    </>
-                </DashboardCard>
-                <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
-                    <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
-                </Stack>
-            </>
+                        variant="contained"
+                        startIcon={<AddIcCallOutlined />}
+                        sx={addIconStyle}
+                    >
+                        Add FAQ
+                    </Button>
+                </Box>
+            </Box>
 
 
-        </PageContainer>
-    );
-};
 
-export default FAQPage;
+            <TableContainer component={Paper} sx={{ mb: 2, mt: 5 }}>
+                <Table sx={tableStyle}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={cellStyle}>SL No</TableCell>
+                            <TableCell sx={cellStyle}>Question</TableCell>
+                            <TableCell sx={cellStyle}>Answer</TableCell>
+                            <TableCell sx={cellStyle}>Create Date </TableCell>
+                            <TableCell sx={cellStyle}>Actions</TableCell>
+
+
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {faqData?.data?.faqs?.map((data: TFaq, index: number) => (
+                            <TableRow key={data._id}>
+                                <TableCell sx={cellStyle}>
+                                    {index + 1}
+                                </TableCell>
+                                <TableCell >{data.question.slice(0, 50)}  </TableCell>
+                                <TableCell>{data.answer.slice(0, 50)}  </TableCell>
+
+
+                                <TableCell sx={cellStyle}>
+
+
+                                    {
+                                        new Date(data?.createdAt).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })
+                                    }
+
+                                </TableCell>
+                                <TableCell >
+                                    <div className="flex justify-center gap-2 ">
+
+                                        <IconButton
+                                            sx={{ ...iconButtonStyle, background: '#216740' }}
+                                            title="Edit"
+                                            onClick={() => hanldeOpenUpdateModal(data._id)}
+                                        >
+                                            <EditIcon sx={iconStyle} />
+                                        </IconButton>
+
+                                        <IconButton
+                                            sx={iconButtonStyle}
+                                            onClick={() => handleDelete(data._id)}
+                                            title="Delete"
+                                        >
+                                            <DeleteIcon sx={iconStyle} className="text-red-600" />
+                                        </IconButton>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            {open && (
+                <CreateFAQModal
+                    open={open}
+                    setOpen={handleClose}
+
+                />
+            )}
+            {openUpdateModal && (
+                <UpdateFAQModal
+                    open={openUpdateModal}
+                    setOpen={handleCloseUpdateModal}
+                    id={selectedTortureId}
+                />
+            )}
+            <Stack spacing={2} display='flex' justifyItems='center' alignItems='center' marginTop='20px'>
+                <Pagination count={totalPage} page={currentPage} onChange={handlePageChange} color="secondary" />
+            </Stack>
+        </Box>
+    )
+}
+

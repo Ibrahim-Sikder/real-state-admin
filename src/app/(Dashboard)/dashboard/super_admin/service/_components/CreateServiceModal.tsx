@@ -141,11 +141,9 @@ const CreateServiceModal = ({ open, setOpen }: TProps) => {
 
                                 </Grid>
                                 <Grid item md={12} sm={12}>
-                                    <ADTextArea
-                                        name="meta_description"
-                                        label="Meta Description"
-                                        placeholder="Enter Meta Description"
-                                    />
+                                    
+                                       <ADEditor  name="meta_description"
+                                        label="Meta Description" />
                                 </Grid>
                             </Grid>
                             <Box display='flex' justifyContent='center' marginTop='20px' >   <Button type="submit">Add Service </Button></Box>

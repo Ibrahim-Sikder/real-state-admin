@@ -2,13 +2,10 @@
 
 import ADForm from "@/components/Forms/Form";
 import ADInput from "@/components/Forms/Input";
-import ADEditor from "@/components/Forms/JodiEditor";
-import ANDModal from "@/components/Shared/Modal/ANAModal";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
+import { Box, Button, Grid, styled } from "@mui/material";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
-import ADTextArea from "@/components/Forms/TextArea";
 import { toast } from "sonner";
 import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
@@ -105,6 +102,7 @@ const CreateTeamModal = ({ open, setOpen }: TProps) => {
                                     />
                                 </Grid>
                                
+
 
                                 <Grid item md={12} sm={12}>
                                     <ADDatePicker

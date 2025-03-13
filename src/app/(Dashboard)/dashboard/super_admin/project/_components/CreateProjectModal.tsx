@@ -350,7 +350,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="projectLocation" label="Project Location" />
+                                        <ADInput fullWidth name="projectLocation" label="Project location map link" />
                                     </Grid>
 
                                     <Grid item md={12} sm={12}>
@@ -431,11 +431,8 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADTextArea
-                                            name="meta_description"
-                                            label="Meta Description"
-                                            placeholder="Enter Meta Description"
-                                        />
+                                        
+                                               <ADEditor name="meta_description"  label="Meta Description" />
                                     </Grid>
                                 </Grid>
                             </FormSection>

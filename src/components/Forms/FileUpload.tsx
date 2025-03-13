@@ -54,8 +54,7 @@ const ADImageUpload = ({ name, setImageUrls, imageUrls = [], label, onClick }: I
       render={() => (
         <Box sx={{ padding: "20px", textAlign: "center", margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center" }}>
           {/* Hide the upload box if images exist */}
-          {imageUrls.length === 0 && (
-            <Box
+          <Box
               sx={{
                 textAlign: "center",
                 background: "#fff",
@@ -84,8 +83,6 @@ const ADImageUpload = ({ name, setImageUrls, imageUrls = [], label, onClick }: I
                 {loading ? "Uploading..." : label}
               </Typography>
             </Box>
-          )}
-
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
             {Array.isArray(imageUrls) && imageUrls.length > 0 &&
               imageUrls.map((url, index) => (

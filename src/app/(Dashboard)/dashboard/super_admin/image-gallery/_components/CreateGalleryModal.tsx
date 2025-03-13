@@ -11,6 +11,7 @@ import ADDatePicker from "@/components/Forms/DatePicker";
 import ADImageUpload from "@/components/Forms/FileUpload";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
 import { useCreatePhotoMutation } from "@/redux/api/photoGalleryApi";
+import { useCreateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -35,7 +36,7 @@ type TProps = {
 
 
 const CreateGalleryModal = ({ open, setOpen }: TProps) => {
-    const [createPhoto] = useCreatePhotoMutation()
+    const [createImgGallery] = useCreateImgGalleryMutation()
     const [images, setImages] = useState<string[]>([]);
     const [imageOpen, setImageOpen] = useState(false);
 
@@ -49,7 +50,7 @@ const CreateGalleryModal = ({ open, setOpen }: TProps) => {
         };
 
         try {
-            const res = await createPhoto(modifiedValues).unwrap();
+            const res = await createImgGallery(modifiedValues).unwrap();
 
             toast.success(res.message);
             setOpen(false);

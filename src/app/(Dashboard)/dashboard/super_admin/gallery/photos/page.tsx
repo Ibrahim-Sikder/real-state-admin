@@ -28,6 +28,7 @@ import ImageLoadingSkeleton from "../_components/ImageLoadingSkeleton";
 import ImageCard from "../_components/ImageCard";
 import CreateFolder from "../_components/CreateFolder";
 import { TQueryParam } from "@/types/api.types";
+import ImageCompress from "../_components/ImageCompress";
 const PhotosPage = () => {
   const [params, setParams] = useState<TQueryParam[]>([]);
 
@@ -111,6 +112,8 @@ const PhotosPage = () => {
 
               <UploadImageDialog folders={foldersData?.data} />
               <CreateFolder />
+              <ImageCompress/>
+
             </Stack>
           </Box>
 

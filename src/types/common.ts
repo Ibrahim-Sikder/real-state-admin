@@ -74,6 +74,7 @@ export type TTeam = {
   social_link: string;
   images: string[];
   createdAt: string;
+  designation:string;
 };
 export type TReview = {
   _id: string;
@@ -108,6 +109,7 @@ export type TImageGallery = {
     date: string,
     createdAt: string,
     images: string[],
+    title:string;
 
 };export type TUser = {
   _id: string,
@@ -142,4 +144,5 @@ export type TProject = {
   locationImg: string,
   createdAt: string,
   floorImage: string,
+  category:string;
 };

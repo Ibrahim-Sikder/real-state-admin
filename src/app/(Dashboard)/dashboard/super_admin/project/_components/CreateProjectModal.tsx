@@ -195,7 +195,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                             size="medium"
                                         />
                                     </Grid>
-                                   
+
                                     <Grid item md={12} sm={12}>
                                         <ADSelect
                                             label="Project Offer"
@@ -431,8 +431,8 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
 
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        
-                                               <ADEditor name="meta_description"  label="Meta Description" />
+
+                                        <ADEditor name="meta_description" label="Meta Description" />
                                     </Grid>
                                 </Grid>
                             </FormSection>

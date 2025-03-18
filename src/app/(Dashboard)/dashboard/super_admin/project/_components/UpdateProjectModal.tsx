@@ -227,8 +227,11 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         special_amenities: singleData?.special_amenities || [],
         common_features: singleData?.common_features || [],
         home_loan_partner: singleData?.home_loan_partner || [],
+        feature:singleData.feature || false
 
     };
+
+
 
     return (
         <>
@@ -537,7 +540,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
 
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                            <ADEditor name="meta_description"  label="Meta Description" />
+                                                <ADEditor name="meta_description" label="Meta Description" />
                                             </Grid>
                                         </Grid>
                                     </FormSection>

@@ -87,8 +87,7 @@ export default function BlogTable() {
 const totalPage = meta?.totalPage || 1;
 
 
-// const { meta } = videoData?.data || { meta: {}, team: [] }
-// const { totalPage = 5 } = meta || {}
+
 
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {

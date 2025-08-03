@@ -5,13 +5,10 @@ import ADInput from "@/components/Forms/Input";
 import { Box, Button, Grid, styled, } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
-import GlobalImageSelector from "@/components/Shared/ImageSelector/GlobalImageSelector";
 import { toast } from "sonner";
-import ADDatePicker from "@/components/Forms/DatePicker";
 import BNPRightSideModal from "@/components/Shared/Modal/RightSideOpenModal";
-import ADImageUpload from "@/components/Forms/FileUpload";
-import { useGetSinglePhotoQuery, useUpdatePhotoMutation } from "@/redux/api/photoGalleryApi";
-import { useGetSingleImgGalleryQuery, useUpdateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
+import { useGetSingleVideoQuery, useUpdateVideoMutation } from "@/redux/api/videoApi";
+// import { useGetSingleImgGalleryQuery, useUpdateImgGalleryMutation } from "@/redux/api/imageGalleryApi";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -35,19 +32,19 @@ type TProps = {
 
 
 const UpdateVideoModal = ({ open, setOpen, id }: TProps) => {
-    const [images, setImages] = useState<string[]>([]);
+    const [videos, setVideos] = useState<string[]>([]);
     const [imageOpen, setImageOpen] = useState(false);
 
 
-    const [updateImgGallery] = useUpdateImgGalleryMutation()
-    const { data, isLoading } = useGetSingleImgGalleryQuery(id)
+    const [updateVideo] = useUpdateVideoMutation()
+    const { data, isLoading } = useGetSingleVideoQuery(id)
 
     const handleSubmit = async (data: FieldValues) => {
-        data.image = images;
+        data.image = videos;
 
 
         try {
-            const res = await updateImgGallery({ ...data, id }).unwrap();
+            const res = await updateVideo({ ...data, id }).unwrap();
 
             toast.success(res?.message);
 
@@ -62,7 +59,7 @@ const UpdateVideoModal = ({ open, setOpen, id }: TProps) => {
 
     useEffect(() => {
         if (singleData) {
-            setImages(singleData?.images || "");
+            setVideos(singleData?.images || "");
         }
     }, [singleData]);
     if (isLoading) {
@@ -70,9 +67,9 @@ const UpdateVideoModal = ({ open, setOpen, id }: TProps) => {
     }
 
     const defaultValues = {
-        images: singleData?.images || "",
-        createdAt: singleData?.createdAt,
-        title: singleData?.title
+        title: singleData?.title,
+        url: singleData?.url || "",
+        // createdAt: singleData?.createdAt,
 
     };
 
@@ -111,7 +108,7 @@ const UpdateVideoModal = ({ open, setOpen, id }: TProps) => {
                                         <Grid item md={12} sm={12}>
                                             <ADInput
                                                 fullWidth
-                                                name="title"
+                                                name="url"
                                                 label="URL"
                                                 placeholder="Video URL"
 
@@ -134,13 +131,13 @@ const UpdateVideoModal = ({ open, setOpen, id }: TProps) => {
                                 </FormSection>
                             </ADForm>
                         </FormContainer>
-                        <GlobalImageSelector
+                        {/* <GlobalImageSelector
                             open={imageOpen}
                             onClose={() => setImageOpen(false)}
                             setSelectedImage={setImages}
                             mode="multiple"
                             selectedImage={images}
-                        />
+                        /> */}
 
 
                     </BNPRightSideModal>

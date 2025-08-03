@@ -74,7 +74,7 @@ export type TTeam = {
   social_link: string;
   images: string[];
   createdAt: string;
-  designation:string;
+  designation: string;
 };
 export type TReview = {
   _id: string;
@@ -104,23 +104,31 @@ export type TFaq = {
 };
 
 export type TImageGallery = {
-    _id: string,
-    name: string,
-    date: string,
-    createdAt: string,
-    images: string[],
-    title:string;
+  _id: string;
+  name: string;
+  date: string;
+  createdAt: string;
+  images: string[];
+  title: string;
+};
 
-};export type TUser = {
-  _id: string,
-  name: string,
-  email: string,
-  role: string[],
-  status: boolean,
-  createdAt:string,
-}
+export type TVideos = {
+  _id: string;
+  title: string;
+  url: string;
+};
+
+export type TUser = {
+  _id: string;
+  name: string;
+  email: string;
+  role: string[];
+  status: boolean;
+  createdAt: string;
+};
+
 export type TProject = {
-  _id: string,
+  _id: string;
   title: string;
   sub_title: string;
   project_type: string;
@@ -141,8 +149,8 @@ export type TProject = {
   conceptImage?: string;
   overviewImage?: string;
   videoUrls?: string[];
-  locationImg: string,
-  createdAt: string,
-  floorImage: string,
-  category:string;
+  locationImg: string;
+  createdAt: string;
+  floorImage: string;
+  category: string;
 };

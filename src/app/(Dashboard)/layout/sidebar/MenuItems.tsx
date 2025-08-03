@@ -11,6 +11,7 @@ import {
   IconPhotoPause,
 
 } from "@tabler/icons-react";
+import { Video } from "lucide-react";
 
 
 const drawerItems = (role: userRole): DrawerItem[] => {
@@ -70,6 +71,11 @@ const drawerItems = (role: userRole): DrawerItem[] => {
           title: "Photo Gallery",
           path: `/dashboard/${role}/image-gallery`,
           icon: Collections,
+        },
+        {
+          title: "Videos",
+          path: `/dashboard/${role}/videos`,
+          icon: Video,
         },
         {
           title: " Stock Photo",

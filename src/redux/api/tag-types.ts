@@ -1,6 +1,6 @@
 export const tagTypesList = [
   "report",
-  "video",
+  "videos",
   "gallery",
   "banner",
   "user",

@@ -18,30 +18,31 @@ import {
   Tooltip,
   Fade,
 } from "@mui/material"
-import { AddIcCallOutlined, ArrowBack } from "@mui/icons-material"
 import Image from "next/image"
-import type { TImageGallery } from "@/types"
-import { addIconStyle, cellStyle, iconButtonStyle, iconStyle, tableHeadStyle, tableStyle } from "@/customStyle"
-import Loader from "@/app/loading"
 import Swal from "sweetalert2"
 import { toast } from "sonner"
+import { useState } from "react"
+import Loader from "@/app/loading"
+import { useRouter } from "next/navigation"
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useDeleteImgGalleryMutation, useGetAllImgGalleryQuery } from "@/redux/api/imageGalleryApi"
-import CreateGalleryModal from "./_components/CreateGalleryModal"
-import UpdateGalleryModal from "./_components/UpdateGalleryModal"
+import { ArrowBack, VideoCall } from "@mui/icons-material"
+import { addIconStyle, cellStyle, iconButtonStyle, iconStyle, tableHeadStyle, tableStyle } from "@/customStyle"
+import { TVideos } from "@/types"
+import CreateVideoModal from "./_components/CreateVideoModal"
+import UpdateVideoModal from "./_components/UpdateVideoModal"
+import { useDeleteVideoMutation, useGetAllVideoQuery } from "@/redux/api/videoApi"
 
 export default function BlogTable() {
+  const router = useRouter()
+  const handleOpen = () => setOpen(true)
   const [open, setOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [deleteVideoGallery] = useDeleteVideoMutation()
   const [openUpdateModal, setOpenUpdateModal] = useState(false)
   const [selectedTortureId, setSelectedTortureId] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const { data: imageGalleryData, isLoading } = useGetAllImgGalleryQuery({ page: currentPage, limit: 5 })
-  const [deleteImgGallery] = useDeleteImgGalleryMutation()
-  const handleOpen = () => setOpen(true)
-  const router = useRouter()
+  const { data: videoData, isLoading } = useGetAllVideoQuery({ page: currentPage, limit: 5 })
+
 
   const hanldeOpenUpdateModal = (id: string) => {
     setSelectedTortureId(id)
@@ -67,11 +68,11 @@ export default function BlogTable() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteImgGallery(id).unwrap()
+          await deleteVideoGallery(id).unwrap()
 
           Swal.fire({
             title: "Deleted!",
-            text: "Your gallery has been deleted.",
+            text: "Video has been deleted.",
             icon: "success",
           })
         } catch (err: any) {
@@ -81,8 +82,14 @@ export default function BlogTable() {
     })
   }
 
-  const { meta } = imageGalleryData?.data || { meta: {}, team: [] }
-  const { totalPage = 5 } = meta || {}
+
+  const meta = videoData?.data?.meta;
+const totalPage = meta?.totalPage || 1;
+
+
+// const { meta } = videoData?.data || { meta: {}, team: [] }
+// const { totalPage = 5 } = meta || {}
+
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page)
@@ -96,15 +103,16 @@ export default function BlogTable() {
     <Box sx={{ width: "100%", p: 2 }}>
       <Box sx={tableHeadStyle}>
         <Typography variant="h6" component="h1" sx={{ fontWeight: 500 }}>
-          All Gallery ({imageGalleryData?.data?.galleries?.length})
+          All Videos
+          {/* ({videoData?.data?.galleries?.length}) */}
         </Typography>
 
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button onClick={handleBack} startIcon={<ArrowBack />} sx={{ mr: 2, color: "#fff" }}>
             Back
           </Button>
-          <Button onClick={handleOpen} variant="contained" startIcon={<AddIcCallOutlined />} sx={addIconStyle}>
-            Add Gallery
+          <Button onClick={handleOpen} variant="contained" startIcon={<VideoCall />} sx={addIconStyle}>
+            Add Videos
           </Button>
         </Box>
       </Box>
@@ -123,14 +131,14 @@ export default function BlogTable() {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>SL No</TableCell>
-              <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>Image</TableCell>
+              <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>Video</TableCell>
               <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>Title</TableCell>
-              <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>Created Date</TableCell>
+              <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>URL</TableCell>
               <TableCell sx={{ ...cellStyle, fontWeight: "bold" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {imageGalleryData?.data?.galleries?.map((data: TImageGallery, index: number) => (
+           {videoData?.data?.videos?.map((data: TVideos, index: number) => (
               <TableRow
                 key={data._id}
                 sx={{
@@ -141,32 +149,40 @@ export default function BlogTable() {
                 }}
               >
                 <TableCell sx={cellStyle}>{index + 1}</TableCell>
-                <TableCell sx={cellStyle}>
-                  {data.images.slice(0, 1).map((img, imgIndex) => (
-                    <div key={imgIndex} className="relative">
+                {/* <TableCell sx={cellStyle}>
+                  {data.map((video: any, videoIndex: any) => (
+                    <div key={videoIndex} className="relative">
+                      <p>{video.title}</p>
+                      <p>{video.url}</p>
                       <Image
                         width={50}
                         height={50}
                         className="w-20 rounded-md object-cover border border-gray-200"
-                        src={img || "/placeholder.svg"}
+                        src={video || "/placeholder.svg"}
                         alt="gallery image"
                       />
-                      {data.images.length > 1 && (
+                      {data.url.length > 1 && (
                         <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          +{data.images.length - 1}
+                          +{data.url.length - 1}
                         </div>
                       )}
                     </div>
                   ))}
+                </TableCell> */}
+                
+                <TableCell sx={cellStyle}>
+                  <iframe
+                    // width="150"
+                    height="90"
+                    src={data.url}
+                    title={data.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ borderRadius: 8 }}
+                  />
                 </TableCell>
                 <TableCell sx={cellStyle}>{data.title}</TableCell>
-                <TableCell sx={cellStyle}>
-                  {new Date(data?.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </TableCell>
+                 <TableCell sx={cellStyle}>{data.url}</TableCell>
                 <TableCell>
                   <div className="flex justify-center gap-2">
                     <Tooltip
@@ -194,7 +210,7 @@ export default function BlogTable() {
                       </IconButton>
                     </Tooltip>
 
-                    
+
                   </div>
                 </TableCell>
               </TableRow>
@@ -203,7 +219,7 @@ export default function BlogTable() {
         </Table>
       </TableContainer>
 
-      {imageGalleryData?.data?.galleries?.length === 0 && (
+      {videoData?.data?.galleries?.length === 0 && (
         <Box
           sx={{
             display: "flex",
@@ -215,18 +231,18 @@ export default function BlogTable() {
           }}
         >
           <Typography variant="h6" color="text.secondary">
-            No gallery items found
+            No Video items found
           </Typography>
-          <Button variant="contained" onClick={handleOpen} startIcon={<AddIcCallOutlined />}>
-            Add Your First Gallery Item
+          <Button variant="contained" onClick={handleOpen} startIcon={<VideoCall />}>
+            Add Your First Video Item
           </Button>
         </Box>
       )}
 
-      {open && <CreateGalleryModal open={open} setOpen={handleClose} />}
+      {open && <CreateVideoModal open={open} setOpen={handleClose} />}
 
       {openUpdateModal && (
-        <UpdateGalleryModal open={openUpdateModal} setOpen={handleCloseUpdateModal} id={selectedTortureId} />
+        <UpdateVideoModal open={openUpdateModal} setOpen={handleCloseUpdateModal} id={selectedTortureId} />
       )}
 
       <Stack

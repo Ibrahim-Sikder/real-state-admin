@@ -2,6 +2,7 @@ import { baseApi } from "./baseApi";
 
 const imageGalleryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    
     createImgGallery: builder.mutation({
       query: (data) => ({
         url: "/image-gallery",
@@ -51,4 +52,3 @@ export const {
   useGetSingleImgGalleryQuery,
   useUpdateImgGalleryMutation,
 } = imageGalleryApi;
-

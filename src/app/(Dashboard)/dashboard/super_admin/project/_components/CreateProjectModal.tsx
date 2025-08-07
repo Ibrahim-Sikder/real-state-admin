@@ -19,6 +19,7 @@ import ADSelect from "@/components/Forms/Select";
 import DateTimepicker from "@/components/Forms/DateTimepicker";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import PdfUploader from "@/components/Forms/PdfUpload";
 
 
 
@@ -53,7 +54,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
     const [conceptImgOpen, setConceptImgOpen] = useState(false);
     const [floorImgOpen, setFloorImgOpen] = useState(false);
     const [locationImgOpen, setLocationImgOpen] = useState(false);
-
+    const [pdfUrls, setPdfUrls] = useState<string[]>([]);
 
     const [activeStep, setActiveStep] = useState(0);
     const isLastStep = activeStep === steps.length - 1;
@@ -109,6 +110,7 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
             floorImages: floorImages || [],
             locationImgs: locationImages || [],
             videoUrls: videoUrls.filter(url => url !== ''),
+             floorPdf: pdfUrls[0] || "",
 
         };
 
@@ -313,24 +315,18 @@ const CreateProjectModal = ({ open, setOpen }: TProps) => {
                                                 label="Floor Images"
                                                 onClick={() => setFloorImgOpen(true)}
                                             />
-
+                                            <PdfUploader
+                                                name="floorPdf"
+                                                setPdfUrls={setPdfUrls}
+                                                pdfUrls={pdfUrls}
+                                                label="Upload Pdf"
+                                            />
                                         </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12}>
-                                        <ADInput fullWidth name="floor_title" label="Floor Title" />
+                                        <ADInput fullWidth name="floorGoogleDriveLink" label="Google Drive Link" />
                                     </Grid>
-                                    <Grid item md={12} sm={12}>
-
-                                        <ADAutoComplete
-                                            label="Institutes & Nearby Locations"
-                                            name="floor_Location"
-                                            options={nearby_location}
-                                        />
-                                    </Grid>
-                                    <Grid item md={12} sm={12}>
-                                        <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                        <ADEditor name="floor_description" label="" />
-                                    </Grid>
+                                   
                                 </Grid>
                             </FormSection>
                         )}

@@ -19,6 +19,7 @@ import ADDatePicker from "@/components/Forms/DatePicker";
 import DateTimepicker from "@/components/Forms/DateTimepicker";
 import ADCheckbox from "@/components/Forms/checkbox";
 import dayjs from "dayjs";
+import PdfUploader from "@/components/Forms/PdfUpload";
 
 const FormContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -53,6 +54,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
     const [conceptImgOpen, setConceptImgOpen] = useState(false);
     const [floorImgOpen, setFloorImgOpen] = useState(false);
     const [locationImgOpen, setLocationImgOpen] = useState(false);
+    const [pdfUrls, setPdfUrls] = useState<string[]>([]);
 
     const [activeStep, setActiveStep] = useState(0);
     const isLastStep = activeStep === steps.length - 1;
@@ -153,6 +155,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         }
         const modifyData = {
             videoUrls,
+            floorPdf: pdfUrls[0] || "",
             ...data
         }
         if (Array.isArray(videoUrls)) {
@@ -168,7 +171,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
             toast.error(err?.message || "Project create failed!");
         }
     };
-
+    console.log('single data this ', singleData)
 
     useEffect(() => {
 
@@ -179,11 +182,19 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
             setLocationImages(singleData?.locationImgs ? Array.isArray(singleData.locationImgs) ? singleData.locationImgs : [singleData.locationImgs] : []);
         }
     }, [singleData]);
-    if (isLoading) {
-        return <p>Loading............</p>
-    }
 
-    console.log(singleData)
+    useEffect(() => {
+        if (singleData) {
+            // ... other image setters
+            setPdfUrls(
+                singleData?.floorPdf
+                    ? Array.isArray(singleData.floorPdf)
+                        ? singleData.floorPdf
+                        : [singleData.floorPdf]
+                    : []
+            );
+        }
+    }, [singleData]);
 
     const defaultValues = {
         title: singleData?.title || '',
@@ -199,16 +210,15 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         sub_short_description: singleData?.sub_short_description || '',
         overview_description: singleData?.overview_description || '',
         concept_description: singleData?.concept_description || '',
-        floor_description: singleData?.floor_description || '',
         virtual_description: singleData?.virtual_description || '',
-        floor_title: singleData?.floor_title || '',
         concept_Location: singleData?.concept_Location || '',
-        floor_Location: singleData?.floor_Location || '',
         projectLocation: singleData?.projectLocation || '',
         virtual_Location: singleData?.virtual_Location || '',
         location: singleData?.location || '',
         map_description: singleData?.map_description || '',
         floorImages: singleData?.floorImages || [],
+        floorGoogleDriveLink: singleData?.floorGoogleDriveLink || '',
+        floorPdf: singleData?.floorPdf || [],
         conceptImages: singleData?.conceptImages || [],
         overviewImages: singleData?.overviewImages || [],
         locationImgs: singleData?.locationImgs || [],
@@ -227,10 +237,13 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
         special_amenities: singleData?.special_amenities || [],
         common_features: singleData?.common_features || [],
         home_loan_partner: singleData?.home_loan_partner || [],
-        feature:singleData.feature || false
+        feature: singleData?.feature || false
 
     };
 
+    if (isLoading) {
+        return <p>Loading............</p>
+    }
 
 
     return (
@@ -414,7 +427,7 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                     <FormSection>
                                         <Grid container spacing={2}>
                                             <Grid item md={12} sm={12}>
-                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="500px">
+                                                <Box display="flex" alignItems="center" justifyContent="center" margin="0 auto" width="200px">
                                                     <ADImageUpload
                                                         name="floorImages"
                                                         setImageUrls={setFloorImages}
@@ -422,24 +435,18 @@ const UpdateProjectModal = ({ open, setOpen, id }: TProps) => {
                                                         label="Floor Images"
                                                         onClick={() => setFloorImgOpen(true)}
                                                     />
-
+                                                    <PdfUploader
+                                                        name="floorPdf"
+                                                        setPdfUrls={setPdfUrls}
+                                                        pdfUrls={pdfUrls}
+                                                        label="Upload Pdf"
+                                                    />
                                                 </Box>
                                             </Grid>
                                             <Grid item md={12} sm={12}>
-                                                <ADInput fullWidth name="floor_title" label="Floor Title" />
+                                                <ADInput fullWidth name="floorGoogleDriveLink" label="Google Drive Link" />
                                             </Grid>
-                                            <Grid item md={12} sm={12}>
 
-                                                <ADAutoComplete
-                                                    label="Institutes & Nearby Locations"
-                                                    name="floor_Location"
-                                                    options={nearby_location}
-                                                />
-                                            </Grid>
-                                            <Grid item md={12} sm={12}>
-                                                <Typography variant="h5" fontWeight='semibold' marginBottom='10px'>Buy an Apartment on Easy Installments</Typography>
-                                                <ADEditor name="floor_description" label="" />
-                                            </Grid>
                                         </Grid>
                                     </FormSection>
                                 )}
